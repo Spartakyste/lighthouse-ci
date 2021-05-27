@@ -57,7 +57,7 @@ try {
         //* For all options, see https://github.com/GoogleChrome/lighthouse/blob/master/lighthouse-core/config/constants.js
 
         const options = {
-            logLevel: 'quiet',
+            logLevel: false,
             output: 'html',
             port: chrome.port,
             throttling: fast4GOptions,
