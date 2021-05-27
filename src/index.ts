@@ -36,8 +36,9 @@ function uploadArtifact() {
     const path = './lhreport.html';
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
+    const file = fs.readdirSync(path);
     // const files = fileNames.map((fileName) => join(resultsPath, fileName));
-    return artifactClient.uploadArtifact('Lighthouse-results', [path]);
+    return artifactClient.uploadArtifact('Lighthouse-results', [file], path);
 }
 
 try {
