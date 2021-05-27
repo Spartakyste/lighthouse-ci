@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as core from '@actions/core';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
@@ -22,7 +23,6 @@ function gatherResults(categories: LighthouseCategories) {
 }
 
 try {
-   
     const fast4GOptions = {
         rttMs: 40,
         throughputKbps: 10 * 1024,
@@ -34,9 +34,22 @@ try {
 
     (async () => {
         const urlsInput = core.getInput('urls');
-        console.log(`urlsInput`, urlsInput);
-        const urls = urlsInput.split(',');
-        console.log('urls ->>', urls);
+        const performanceTreshold = core.getInput('performanceTreshold');
+        const accessibilityTreshold = core.getInput('accessibilityTreshold');
+        const bestPracticesTreshold = core.getInput('bestPracticesTreshold');
+        const PWATreshold = core.getInput('PWATreshold');
+        const SEOTreshold = core.getInput('SEOTreshold');
+
+        const thesholds = {
+            Performance: performanceTreshold,
+            Accessibility: accessibilityTreshold,
+            'Best Practices': bestPracticesTreshold,
+            SEO: SEOTreshold,
+            'Progressive Web App': PWATreshold,
+        };
+
+        // const urls = urlsInput.split(',');
+
         const chrome = await launch({
             chromeFlags: ['--headless'],
         });
@@ -59,10 +72,7 @@ try {
             emulatedUserAgent:
                 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Safari/537.36 Chrome-Lighthouse',
         };
-        const runnerResult = await lighthouse(
-            urls,
-            options
-        );
+        const runnerResult = await lighthouse(urlsInput, options);
 
         // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
@@ -72,7 +82,22 @@ try {
         // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
 
         const results = gatherResults(runnerResult.lhr.categories);
-        console.log(`results`, results);
+
+        let errors = [];
+
+        results.forEach(({ title, score }) => {
+            const scoreTreshold = thesholds[title];
+            if (score < scoreTreshold) errors.push({ title, score });
+        });
+
+        if (errors.length > 0) {
+            errors.forEach((err) => {
+                console.log(
+                    `You didn't meet the tresholds values you provided for the category ${err.title} with a score of ${err.score}`
+                );
+            });
+            core.setFailed("Thresholds weren't meet");
+        }
         await chrome.kill();
     })();
 } catch (error) {
