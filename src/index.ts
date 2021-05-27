@@ -22,10 +22,7 @@ function gatherResults(categories: LighthouseCategories) {
 }
 
 try {
-    const urlsInput = core.getInput('urls');
-
-    const urls = urlsInput.split(',');
-    console.log('urls ->>', urls);
+   
     const fast4GOptions = {
         rttMs: 40,
         throughputKbps: 10 * 1024,
@@ -36,6 +33,10 @@ try {
     };
 
     (async () => {
+        const urlsInput = core.getInput('urls');
+        console.log(`urlsInput`, urlsInput);
+        const urls = urlsInput.split(',');
+        console.log('urls ->>', urls);
         const chrome = await launch({
             chromeFlags: ['--headless'],
         });
@@ -43,7 +44,7 @@ try {
         //* For all options, see https://github.com/GoogleChrome/lighthouse/blob/master/lighthouse-core/config/constants.js
 
         const options = {
-            logLevel: 'info',
+            logLevel: null,
             output: 'html',
             port: chrome.port,
             throttling: fast4GOptions,

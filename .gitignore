@@ -6,3 +6,5 @@ build
 
 # Create your own .env file by copying .env.example, and don't commit it!
 .env
+
+lhreport.html
