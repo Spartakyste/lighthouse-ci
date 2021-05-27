@@ -47,23 +47,13 @@ function gatherResults(categories) {
         };
     });
 }
-function promisifiedReaddir(path) {
-    return new Promise((resolve, reject) => {
-        fs_1.default.readdir(path, (error, files) => {
-            if (error)
-                reject(error);
-            else
-                resolve(files);
-        });
-    });
-}
 function uploadArtifact() {
     const path = './lhreport.html';
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
     const file = fs_1.default.readdirSync(path);
     // const files = fileNames.map((fileName) => join(resultsPath, fileName));
-    return artifactClient.uploadArtifact('Lighthouse-results', [file], path);
+    return artifactClient.uploadArtifact('Lighthouse-results', file, path);
 }
 try {
     const fast4GOptions = {

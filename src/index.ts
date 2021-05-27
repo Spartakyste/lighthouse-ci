@@ -23,22 +23,13 @@ function gatherResults(categories: LighthouseCategories) {
     });
 }
 
-function promisifiedReaddir(path: string) {
-    return new Promise((resolve, reject) => {
-        fs.readdir(path, (error, files) => {
-            if (error) reject(error);
-            else resolve(files);
-        });
-    });
-}
-
 function uploadArtifact() {
     const path = './lhreport.html';
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
     const file = fs.readdirSync(path);
     // const files = fileNames.map((fileName) => join(resultsPath, fileName));
-    return artifactClient.uploadArtifact('Lighthouse-results', [file], path);
+    return artifactClient.uploadArtifact('Lighthouse-results', file, path);
 }
 
 try {
