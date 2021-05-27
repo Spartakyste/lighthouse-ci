@@ -123,9 +123,10 @@ try {
         core.info('Uploading artifact ...');
         yield uploadArtifact();
         core.info('Upload is over');
+        fs_1.default.unlinkSync('./lhreport.html');
         if (errors.length > 0) {
             errors.forEach((err) => {
-                console.log(`You didn't meet the tresholds values you provided for the category ${err.title} with a score of ${err.score}`);
+                core.error(`You didn't meet the tresholds values you provided for the category ${err.title} with a score of ${err.score}`);
             });
             core.setFailed("Thresholds weren't meet");
         }
