@@ -6,6 +6,6 @@ jobs:
     name: testing out the job
     steps:
       - name: Step
-        uses: Spartakyste/lighthouse-ci@master
+        uses: Spartakyste/lighthouse-ci@ci/creation
         with:
           urls: 'http://localhost:3000/fr'
