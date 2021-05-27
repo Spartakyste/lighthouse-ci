@@ -37,7 +37,6 @@ const artifact = __importStar(require("@actions/artifact"));
 const lighthouse_1 = __importDefault(require("lighthouse"));
 const chrome_launcher_1 = require("chrome-launcher");
 const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
 function gatherResults(categories) {
     return Object.keys(categories).map((key) => {
         const title = categories[key].title;
@@ -49,7 +48,7 @@ function gatherResults(categories) {
     });
 }
 function uploadArtifact() {
-    const resultPath = path_1.default(process.cwd(), '.lhreport.html');
+    const resultPath = `${__dirname}/.lhreport.html`;
     console.log(`resultPath`, resultPath);
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);

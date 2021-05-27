@@ -25,7 +25,7 @@ function gatherResults(categories: LighthouseCategories) {
 }
 
 function uploadArtifact() {
-    const resultPath = join(process.cwd(), '.lhreport.html')
+    const resultPath = `${__dirname}/.lhreport.html`
 console.log(`resultPath`, resultPath)
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
