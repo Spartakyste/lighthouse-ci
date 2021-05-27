@@ -33,7 +33,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 //@ts-nocheck
 const core = __importStar(require("@actions/core"));
-const artifact_1 = __importDefault(require("@actions/artifact"));
+const artifact = __importStar(require("@actions/artifact"));
 const lighthouse_1 = __importDefault(require("lighthouse"));
 const chrome_launcher_1 = require("chrome-launcher");
 const fs_1 = __importDefault(require("fs"));
@@ -59,7 +59,7 @@ function promisifiedReaddir(path) {
 }
 function uploadArtifact() {
     const path = './lhreport.html';
-    const artifactClient = artifact_1.default.create();
+    const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
     // const files = fileNames.map((fileName) => join(resultsPath, fileName));
     return artifactClient.uploadArtifact('Lighthouse-results', [path]);

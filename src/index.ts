@@ -1,6 +1,6 @@
 //@ts-nocheck
 import * as core from '@actions/core';
-import artifact from '@actions/artifact';
+import * as artifact from '@actions/artifact';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
