@@ -1,5 +1,6 @@
 //@ts-nocheck
 import * as core from '@actions/core';
+import artifact from '@actions/artifact';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
@@ -20,6 +21,23 @@ function gatherResults(categories: LighthouseCategories) {
             score,
         };
     });
+}
+
+function promisifiedReaddir(path: string) {
+    return new Promise((resolve, reject) => {
+        fs.readdir(path, (error, files) => {
+            if (error) reject(error);
+            else resolve(files);
+        });
+    });
+}
+
+function uploadArtifact() {
+    const path = './lhreport.html';
+    const artifactClient = artifact.create();
+    // const fileNames = await promisifiedReaddir(path);
+    // const files = fileNames.map((fileName) => join(resultsPath, fileName));
+    return artifactClient.uploadArtifact('Lighthouse-results', [path]);
 }
 
 try {
@@ -90,6 +108,11 @@ try {
             if (score < scoreTreshold) errors.push({ title, score });
         });
 
+        core.info('Uploading artifact ...');
+        await uploadArtifact();
+        core.info('Upload is over');
+
+
         if (errors.length > 0) {
             errors.forEach((err) => {
                 console.log(
@@ -101,5 +124,5 @@ try {
         await chrome.kill();
     })();
 } catch (error) {
-    // core.setFailed(error.message);
+    core.setFailed(error.message);
 }

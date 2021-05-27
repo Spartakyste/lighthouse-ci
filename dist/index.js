@@ -33,6 +33,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 //@ts-nocheck
 const core = __importStar(require("@actions/core"));
+const artifact_1 = __importDefault(require("@actions/artifact"));
 const lighthouse_1 = __importDefault(require("lighthouse"));
 const chrome_launcher_1 = require("chrome-launcher");
 const fs_1 = __importDefault(require("fs"));
@@ -45,6 +46,23 @@ function gatherResults(categories) {
             score,
         };
     });
+}
+function promisifiedReaddir(path) {
+    return new Promise((resolve, reject) => {
+        fs_1.default.readdir(path, (error, files) => {
+            if (error)
+                reject(error);
+            else
+                resolve(files);
+        });
+    });
+}
+function uploadArtifact() {
+    const path = './lhreport.html';
+    const artifactClient = artifact_1.default.create();
+    // const fileNames = await promisifiedReaddir(path);
+    // const files = fileNames.map((fileName) => join(resultsPath, fileName));
+    return artifactClient.uploadArtifact('Lighthouse-results', [path]);
 }
 try {
     const fast4GOptions = {
@@ -102,6 +120,9 @@ try {
             if (score < scoreTreshold)
                 errors.push({ title, score });
         });
+        core.info('Uploading artifact ...');
+        yield uploadArtifact();
+        core.info('Upload is over');
         if (errors.length > 0) {
             errors.forEach((err) => {
                 console.log(`You didn't meet the tresholds values you provided for the category ${err.title} with a score of ${err.score}`);
@@ -112,5 +133,5 @@ try {
     }))();
 }
 catch (error) {
-    // core.setFailed(error.message);
+    core.setFailed(error.message);
 }
