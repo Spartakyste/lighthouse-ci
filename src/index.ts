@@ -44,7 +44,7 @@ try {
         //* For all options, see https://github.com/GoogleChrome/lighthouse/blob/master/lighthouse-core/config/constants.js
 
         const options = {
-            logLevel: null,
+            logLevel: 'quiet',
             output: 'html',
             port: chrome.port,
             throttling: fast4GOptions,
@@ -60,7 +60,7 @@ try {
                 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Safari/537.36 Chrome-Lighthouse',
         };
         const runnerResult = await lighthouse(
-            'http://localhost:3000/fr',
+            urls,
             options
         );
 
