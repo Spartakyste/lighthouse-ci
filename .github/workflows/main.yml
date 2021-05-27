@@ -1,8 +1,4 @@
-# Controls when the action will run. 
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ ci/creation ]
+on: [ push ]
 
 jobs:
   hello_world_job:
@@ -10,6 +6,6 @@ jobs:
     name: testing out the job
     steps:
       - name: Step
-        uses: Spartakyste/lighthouse-ci
+        uses: Spartakyste/lighthouse-ci@master
         with:
           urls: 'http://localhost:3000/fr'
