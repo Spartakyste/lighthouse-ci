@@ -1,4 +1,4 @@
-// import core from '@actions/core';
+import core from '@actions/core';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
@@ -22,10 +22,10 @@ function gatherResults(categories: LighthouseCategories) {
 }
 
 try {
-    // const urlsInput = core.getInput('urls');
+    const urlsInput = core.getInput('urls');
 
-    // const urls = urlsInput.split(',');
-
+    const urls = urlsInput.split(',');
+    console.log('urls ->>', urls);
     const fast4GOptions = {
         rttMs: 40,
         throughputKbps: 10 * 1024,
