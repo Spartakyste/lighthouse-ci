@@ -1,0 +1,10 @@
+name: "Lighthouse-check"
+description: "Run Lighthouse"
+inputs:
+  urls:
+    description: "The urls to test"
+    required: true
+    default: ""
+runs:
+  using: "node12"
+  main: 'dist/index.js'

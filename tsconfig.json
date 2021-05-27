@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "target": "es6",
+        "outDir": "dist",
+        "module": "commonjs",
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "alwaysStrict": true,
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "paths": {
+            "package.json": ["package.json"],
+            "*": ["src/*"]
+        }
+    },
+    "exclude": ["node_modules"]
+}
