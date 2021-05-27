@@ -26,9 +26,11 @@ function gatherResults(categories: LighthouseCategories) {
 
 function uploadArtifact() {
     const resultPath = join(process.cwd(), '.lhreport.html')
+console.log(`resultPath`, resultPath)
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
     const file = fs.readdirSync(resultPath);
+    console.log(`file`, file)
     // const files = fileNames.map((fileName) => join(resultsPath, fileName));
     return artifactClient.uploadArtifact('Lighthouse-results', file, resultPath);
 }
