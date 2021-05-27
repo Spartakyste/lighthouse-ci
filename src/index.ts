@@ -4,6 +4,7 @@ import * as artifact from '@actions/artifact';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
+import join from 'path';
 
 interface LighthouseCategories {
     [categorie: string]: {
@@ -25,11 +26,12 @@ function gatherResults(categories: LighthouseCategories) {
 
 function uploadArtifact() {
     const path = './lhreport.html';
+    const resultPath = join(process.cwd(), '.lhreport.html')
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
     const file = fs.readdirSync(path);
     // const files = fileNames.map((fileName) => join(resultsPath, fileName));
-    return artifactClient.uploadArtifact('Lighthouse-results', file, path);
+    return artifactClient.uploadArtifact('Lighthouse-results', file, resultPath);
 }
 
 try {
