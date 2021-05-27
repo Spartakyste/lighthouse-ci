@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import * as core from '@actions/core';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
