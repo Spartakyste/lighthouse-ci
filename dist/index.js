@@ -37,7 +37,6 @@ const artifact = __importStar(require("@actions/artifact"));
 const lighthouse_1 = __importDefault(require("lighthouse"));
 const chrome_launcher_1 = require("chrome-launcher");
 const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
 function gatherResults(categories) {
     return Object.keys(categories).map((key) => {
         const title = categories[key].title;
@@ -54,7 +53,7 @@ function uploadArtifact() {
         console.log(`resultPath`, resultPath);
         const artifactClient = artifact.create();
         // const fileNames = await promisifiedReaddir(path);
-        const file = fs_1.default.readdirSync(path_1.default(__dirname, resultPath));
+        const file = fs_1.default.readdirSync(resultPath);
         console.log(`file`, file);
         // const files = fileNames.map((fileName) => join(resultsPath, fileName));
         return artifactClient.uploadArtifact('Lighthouse-results', file, resultPath);

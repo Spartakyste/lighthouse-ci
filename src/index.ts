@@ -30,7 +30,7 @@ function uploadArtifact() {
         console.log(`resultPath`, resultPath);
         const artifactClient = artifact.create();
         // const fileNames = await promisifiedReaddir(path);
-        const file = fs.readdirSync(join(__dirname, resultPath));
+        const file = fs.readdirSync(resultPath);
         console.log(`file`, file);
         // const files = fileNames.map((fileName) => join(resultsPath, fileName));
         return artifactClient.uploadArtifact(
