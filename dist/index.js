@@ -48,7 +48,7 @@ function gatherResults(categories) {
     });
 }
 function uploadArtifact() {
-    const resultPath = `${process.cwd()}/.lhreport.html`;
+    const resultPath = `.lhreport.html`;
     console.log(`resultPath`, resultPath);
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
