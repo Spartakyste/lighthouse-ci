@@ -31,6 +31,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.uploadArtifact = void 0;
 //@ts-nocheck
 const core = __importStar(require("@actions/core"));
 const artifact = __importStar(require("@actions/artifact"));
@@ -49,19 +50,17 @@ function gatherResults(categories) {
 }
 function uploadArtifact() {
     try {
-        const resultPath = `../lhreport.html`;
-        console.log(`resultPath`, resultPath);
+        const resultsPath = `${process.cwd()}/files`;
         const artifactClient = artifact.create();
-        // const fileNames = await promisifiedReaddir(path);
-        const file = fs_1.default.readdirSync(resultPath);
-        console.log(`file`, file);
-        // const files = fileNames.map((fileName) => join(resultsPath, fileName));
-        return artifactClient.uploadArtifact('Lighthouse-results', file, resultPath);
+        const fileNames = fs_1.default.readdirSync(resultsPath);
+        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
+        return artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true });
     }
     catch (error) {
-        throw Error(error);
+        core.setFailed(error.message);
     }
 }
+exports.uploadArtifact = uploadArtifact;
 try {
     const fast4GOptions = {
         rttMs: 40,
@@ -73,17 +72,17 @@ try {
     };
     (() => __awaiter(void 0, void 0, void 0, function* () {
         const urlsInput = core.getInput('urls');
-        const performanceTreshold = core.getInput('performanceTreshold');
-        const accessibilityTreshold = core.getInput('accessibilityTreshold');
-        const bestPracticesTreshold = core.getInput('bestPracticesTreshold');
-        const PWATreshold = core.getInput('PWATreshold');
-        const SEOTreshold = core.getInput('SEOTreshold');
+        const performanceThreshold = core.getInput('performanceThreshold');
+        const accessibilityThreshold = core.getInput('accessibilityThreshold');
+        const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
+        const PWAThreshold = core.getInput('PWAThreshold');
+        const SEOThreshold = core.getInput('SEOThreshold');
         const thesholds = {
-            Performance: performanceTreshold,
-            Accessibility: accessibilityTreshold,
-            'Best Practices': bestPracticesTreshold,
-            SEO: SEOTreshold,
-            'Progressive Web App': PWATreshold,
+            Performance: performanceThreshold,
+            Accessibility: accessibilityThreshold,
+            'Best Practices': bestPracticesThreshold,
+            SEO: SEOThreshold,
+            'Progressive Web App': PWAThreshold,
         };
         // const urls = urlsInput.split(',');
         const chrome = yield chrome_launcher_1.launch({
@@ -114,17 +113,17 @@ try {
         const results = gatherResults(runnerResult.lhr.categories);
         let errors = [];
         results.forEach(({ title, score }) => {
-            const scoreTreshold = thesholds[title];
-            if (score < scoreTreshold)
+            const scoreThreshold = thesholds[title];
+            if (score < scoreThreshold)
                 errors.push({ title, score });
         });
         core.info('Uploading artifact ...');
         yield uploadArtifact();
         core.info('Upload is over');
-        fs_1.default.unlinkSync('./lhreport.html');
+        fs_1.default.unlinkSync('./files/lhreport.html');
         if (errors.length > 0) {
             errors.forEach((err) => {
-                core.error(`You didn't meet the tresholds values you provided for the category ${err.title} with a score of ${err.score}`);
+                core.error(`You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`);
             });
             core.setFailed("Thresholds weren't meet");
         }

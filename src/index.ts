@@ -24,22 +24,15 @@ function gatherResults(categories: LighthouseCategories) {
     });
 }
 
-function uploadArtifact() {
+export function uploadArtifact() {
     try {
-        const resultPath = `../lhreport.html`;
-        console.log(`resultPath`, resultPath);
-        const artifactClient = artifact.create();
-        // const fileNames = await promisifiedReaddir(path);
-        const file = fs.readdirSync(resultPath);
-        console.log(`file`, file);
-        // const files = fileNames.map((fileName) => join(resultsPath, fileName));
-        return artifactClient.uploadArtifact(
-            'Lighthouse-results',
-            file,
-            resultPath
-        );
+        const resultsPath = `${process.cwd()}/files`;
+        const artifactClient = artifact.create()
+        const fileNames = fs.readdirSync(resultsPath);
+        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`)
+        return artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true })
     } catch (error) {
-        throw Error(error);
+        core.setFailed(error.message);
     }
 }
 
@@ -55,18 +48,18 @@ try {
 
     (async () => {
         const urlsInput = core.getInput('urls');
-        const performanceTreshold = core.getInput('performanceTreshold');
-        const accessibilityTreshold = core.getInput('accessibilityTreshold');
-        const bestPracticesTreshold = core.getInput('bestPracticesTreshold');
-        const PWATreshold = core.getInput('PWATreshold');
-        const SEOTreshold = core.getInput('SEOTreshold');
+        const performanceThreshold = core.getInput('performanceThreshold');
+        const accessibilityThreshold = core.getInput('accessibilityThreshold');
+        const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
+        const PWAThreshold = core.getInput('PWAThreshold');
+        const SEOThreshold = core.getInput('SEOThreshold');
 
         const thesholds = {
-            Performance: performanceTreshold,
-            Accessibility: accessibilityTreshold,
-            'Best Practices': bestPracticesTreshold,
-            SEO: SEOTreshold,
-            'Progressive Web App': PWATreshold,
+            Performance: performanceThreshold,
+            Accessibility: accessibilityThreshold,
+            'Best Practices': bestPracticesThreshold,
+            SEO: SEOThreshold,
+            'Progressive Web App': PWAThreshold,
         };
 
         // const urls = urlsInput.split(',');
@@ -107,20 +100,20 @@ try {
         let errors = [];
 
         results.forEach(({ title, score }) => {
-            const scoreTreshold = thesholds[title];
-            if (score < scoreTreshold) errors.push({ title, score });
+            const scoreThreshold = thesholds[title];
+            if (score < scoreThreshold) errors.push({ title, score });
         });
 
         core.info('Uploading artifact ...');
         await uploadArtifact();
         core.info('Upload is over');
 
-        fs.unlinkSync('./lhreport.html');
+        fs.unlinkSync('./files/lhreport.html');
 
         if (errors.length > 0) {
             errors.forEach((err) => {
                 core.error(
-                    `You didn't meet the tresholds values you provided for the category ${err.title} with a score of ${err.score}`
+                    `You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`
                 );
             });
             core.setFailed("Thresholds weren't meet");
