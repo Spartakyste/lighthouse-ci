@@ -25,14 +25,18 @@ function gatherResults(categories: LighthouseCategories) {
 }
 
 function uploadArtifact() {
-    const resultPath = `.lhreport.html`
-console.log(`resultPath`, resultPath)
+    const resultPath = `../lhreport.html`;
+    console.log(`resultPath`, resultPath);
     const artifactClient = artifact.create();
     // const fileNames = await promisifiedReaddir(path);
-    const file = fs.readdirSync(resultPath);
-    console.log(`file`, file)
+    const file = fs.readdirSync(join(__dirname, 'resultPath'));
+    console.log(`file`, file);
     // const files = fileNames.map((fileName) => join(resultsPath, fileName));
-    return artifactClient.uploadArtifact('Lighthouse-results', file, resultPath);
+    return artifactClient.uploadArtifact(
+        'Lighthouse-results',
+        file,
+        resultPath
+    );
 }
 
 try {
@@ -111,7 +115,7 @@ try {
 
         if (errors.length > 0) {
             errors.forEach((err) => {
-               core.error(
+                core.error(
                     `You didn't meet the tresholds values you provided for the category ${err.title} with a score of ${err.score}`
                 );
             });
