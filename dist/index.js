@@ -49,14 +49,19 @@ function gatherResults(categories) {
     });
 }
 function uploadArtifact() {
-    const resultPath = `../lhreport.html`;
-    console.log(`resultPath`, resultPath);
-    const artifactClient = artifact.create();
-    // const fileNames = await promisifiedReaddir(path);
-    const file = fs_1.default.readdirSync(path_1.default(__dirname, 'resultPath'));
-    console.log(`file`, file);
-    // const files = fileNames.map((fileName) => join(resultsPath, fileName));
-    return artifactClient.uploadArtifact('Lighthouse-results', file, resultPath);
+    try {
+        const resultPath = `../lhreport.html`;
+        console.log(`resultPath`, resultPath);
+        const artifactClient = artifact.create();
+        // const fileNames = await promisifiedReaddir(path);
+        const file = fs_1.default.readdirSync(path_1.default(__dirname, resultPath));
+        console.log(`file`, file);
+        // const files = fileNames.map((fileName) => join(resultsPath, fileName));
+        return artifactClient.uploadArtifact('Lighthouse-results', file, resultPath);
+    }
+    catch (error) {
+        throw Error(error);
+    }
 }
 try {
     const fast4GOptions = {
