@@ -107,7 +107,7 @@ try {
         const runnerResult = yield lighthouse_1.default(urlsInput, options);
         // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
-        fs_1.default.writeFileSync('lhreport.html', reportHtml);
+        fs_1.default.writeFileSync('files/lhreport.html', reportHtml);
         console.log('Report is done for', runnerResult.lhr.finalUrl);
         // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
         const results = gatherResults(runnerResult.lhr.categories);

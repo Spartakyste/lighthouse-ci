@@ -90,7 +90,7 @@ try {
 
         // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
-        fs.writeFileSync('lhreport.html', reportHtml);
+        fs.writeFileSync('files/lhreport.html', reportHtml);
 
         console.log('Report is done for', runnerResult.lhr.finalUrl);
         // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
