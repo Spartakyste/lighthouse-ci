@@ -120,7 +120,7 @@ try {
                 errors.push({ title, score });
         });
         core.info('Uploading artifact ...');
-        // await uploadArtifact();
+        yield uploadArtifact();
         core.info('Upload is over');
         fs_1.default.unlinkSync('./files/lhreport.html');
         yield fs_1.default.promises.rmdir('files');
