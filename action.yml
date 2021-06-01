@@ -1,0 +1,25 @@
+name: "Lighthouse-check"
+description: "Run Lighthouse"
+inputs:
+  urls:
+    description: "The urls to test"
+    required: true
+    default: ""
+  performanceTreshold:
+    description: "A treshold value for the performance category"
+    required: false
+  accessibilityTreshold:
+     description: "A treshold value for the accessibility category"
+     required: false
+  bestPracticesTreshold: 
+    description: "A treshold value for the best pratices category"
+    required: false
+  SEOTreshold: 
+     description: "A treshold value for the SEO category"
+     required: false
+  PWATreshold:  
+    description: "A treshold value for the PWA category"
+    required: false
+runs:
+  using: "node12"
+  main: 'dist/index.js'

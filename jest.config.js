@@ -9,7 +9,7 @@ module.exports = {
     ],
     testPathIgnorePatterns: ['/lib/', '/node_modules/', 'mocks'],
     moduleFileExtensions: ['js', 'ts', 'json'],
-    collectCoverage: true,
+    collectCoverage: false,
     collectCoverageFrom: ['src/**'],
     coverageThreshold: {
         global: {

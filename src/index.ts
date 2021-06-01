@@ -1,7 +1,10 @@
-// import core from '@actions/core';
+//@ts-nocheck
+import * as core from '@actions/core';
+import * as artifact from '@actions/artifact';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
+import join from 'path';
 
 interface LighthouseCategories {
     [categorie: string]: {
@@ -10,6 +13,7 @@ interface LighthouseCategories {
         description: string;
     };
 }
+
 function gatherResults(categories: LighthouseCategories) {
     return Object.keys(categories).map((key) => {
         const title = categories[key].title;
@@ -21,11 +25,25 @@ function gatherResults(categories: LighthouseCategories) {
     });
 }
 
+export function uploadArtifact() {
+    try {
+        const resultsPath = `${process.cwd()}/files`;
+        console.log(`resultsPath`, resultsPath);
+        const artifactClient = artifact.create();
+        const fileNames = fs.readdirSync(resultsPath);
+        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
+        return artifactClient.uploadArtifact(
+            'Lighthouse-results',
+            files,
+            resultsPath,
+            { continueOnError: true }
+        );
+    } catch (error) {
+        core.setFailed(error.message);
+    }
+}
+
 try {
-    // const urlsInput = core.getInput('urls');
-
-    // const urls = urlsInput.split(',');
-
     const fast4GOptions = {
         rttMs: 40,
         throughputKbps: 10 * 1024,
@@ -36,6 +54,29 @@ try {
     };
 
     (async () => {
+        const urlsInput = core.getInput('urls') || 'http://localhost:3000';
+        const performanceThreshold = core.getInput('performanceThreshold');
+        const accessibilityThreshold = core.getInput('accessibilityThreshold');
+        const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
+        const PWAThreshold = core.getInput('PWAThreshold');
+        const SEOThreshold = core.getInput('SEOThreshold');
+
+        const thesholds = {
+            Performance: performanceThreshold,
+            Accessibility: accessibilityThreshold,
+            'Best Practices': bestPracticesThreshold,
+            SEO: SEOThreshold,
+            'Progressive Web App': PWAThreshold,
+        };
+
+        Object.keys(thesholds).forEach((title) => {
+            core.info(
+                `You enforced a minimum value of ${thesholds[title]} for the catefory ${title}`
+            );
+        });
+
+        // const urls = urlsInput.split(',');
+
         const chrome = await launch({
             chromeFlags: ['--headless'],
         });
@@ -43,7 +84,7 @@ try {
         //* For all options, see https://github.com/GoogleChrome/lighthouse/blob/master/lighthouse-core/config/constants.js
 
         const options = {
-            logLevel: 'info',
+            logLevel: false,
             output: 'html',
             port: chrome.port,
             throttling: fast4GOptions,
@@ -58,22 +99,47 @@ try {
             emulatedUserAgent:
                 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Safari/537.36 Chrome-Lighthouse',
         };
-        const runnerResult = await lighthouse(
-            'http://localhost:3000/fr',
-            options
-        );
+        const runnerResult = await lighthouse(urlsInput, options);
 
         // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
-        fs.writeFileSync('lhreport.html', reportHtml);
+
+        await fs.promises.mkdir('files');
+        fs.writeFileSync('files/lhreport.html', reportHtml);
 
         console.log('Report is done for', runnerResult.lhr.finalUrl);
         // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
 
         const results = gatherResults(runnerResult.lhr.categories);
         console.log(`results`, results);
+        let errors = [];
+
+        results.forEach(({ title, score }) => {
+            const scoreThreshold = thesholds[title];
+            if (score < scoreThreshold) errors.push({ title, score });
+            else
+                core.info(
+                    `You did meet the threshold values you provided for the category ${title} with a score of ${score}`
+                );
+        });
+
+        core.info('Uploading artifact ...');
+        // await uploadArtifact();
+        core.info('Upload is over');
+
+        fs.unlinkSync('./files/lhreport.html');
+        await fs.promises.rmdir('files');
+
+        if (errors.length > 0) {
+            errors.forEach((err) => {
+                core.error(
+                    `You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`
+                );
+            });
+            core.setFailed("Thresholds weren't meet");
+        }
         await chrome.kill();
     })();
 } catch (error) {
-    // core.setFailed(error.message);
+    core.setFailed(error.message);
 }

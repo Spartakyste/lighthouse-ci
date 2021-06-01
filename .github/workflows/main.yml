@@ -1,0 +1,16 @@
+on: [ push ]
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    name: testing out the job
+    steps:
+      - name: Step
+        uses: Spartakyste/lighthouse-ci@ci/creation
+        with:
+          urls: 'http://localhost:3000/fr'
+          performanceTreshold: 90
+          accessibilityTreshold: 90
+          bestPracticesTreshold: 90
+          SEOTreshold: 90
+          PWATreshold: 90
