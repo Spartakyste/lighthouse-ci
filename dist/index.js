@@ -32,7 +32,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadArtifact = void 0;
-//@ts-nocheck
 const core = __importStar(require("@actions/core"));
 const artifact = __importStar(require("@actions/artifact"));
 const lighthouse_1 = __importDefault(require("lighthouse"));
@@ -40,7 +39,7 @@ const chrome_launcher_1 = require("chrome-launcher");
 const fs_1 = __importDefault(require("fs"));
 function gatherResults(categories) {
     return Object.keys(categories).map((key) => {
-        const title = categories[key].title;
+        const { title } = categories[key];
         const score = categories[key].score * 100;
         return {
             title,
@@ -58,6 +57,7 @@ function uploadArtifact() {
     }
     catch (error) {
         core.setFailed(error.message);
+        return undefined;
     }
 }
 exports.uploadArtifact = uploadArtifact;
@@ -84,10 +84,6 @@ try {
             SEO: SEOThreshold,
             'Progressive Web App': PWAThreshold,
         };
-        Object.keys(thesholds).forEach((title) => {
-            core.info(`You enforced a minimum value of ${thesholds[title]} for the catefory ${title}`);
-        });
-        // const urls = urlsInput.split(',');
         const chrome = yield chrome_launcher_1.launch({
             chromeFlags: ['--headless'],
         });
@@ -112,10 +108,12 @@ try {
         yield fs_1.default.promises.mkdir('files');
         fs_1.default.writeFileSync('files/lhreport.html', reportHtml);
         const results = gatherResults(runnerResult.lhr.categories);
-        let errors = [];
+        const errors = [];
         results.forEach(({ title, score }) => {
-            const scoreThreshold = thesholds[title];
-            if (score < scoreThreshold)
+            const castedTitle = title;
+            const value = Number(thesholds[castedTitle]);
+            core.info(`You enforced a minimum value of ${value} for the catefory ${castedTitle}`);
+            if (score < value)
                 errors.push({ title, score });
             else
                 core.info(`You did meet the threshold values you provided for the category ${title} with a score of ${score}`);

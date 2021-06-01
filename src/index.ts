@@ -1,4 +1,3 @@
-//@ts-nocheck
 import * as core from '@actions/core';
 import * as artifact from '@actions/artifact';
 import lighthouse from 'lighthouse';
@@ -13,9 +12,19 @@ interface LighthouseCategories {
     };
 }
 
-function gatherResults(categories: LighthouseCategories) {
+interface Results {
+    title: string;
+    score: number;
+}
+
+interface Error {
+    title: string;
+    score: number;
+}
+
+function gatherResults(categories: LighthouseCategories): Results[] {
     return Object.keys(categories).map((key) => {
-        const title = categories[key].title;
+        const { title } = categories[key];
         const score = categories[key].score * 100;
         return {
             title,
@@ -24,7 +33,7 @@ function gatherResults(categories: LighthouseCategories) {
     });
 }
 
-export function uploadArtifact() {
+export function uploadArtifact(): Promise<artifact.UploadResponse> | void {
     try {
         const resultsPath = `${process.cwd()}/files`;
 
@@ -39,6 +48,7 @@ export function uploadArtifact() {
         );
     } catch (error) {
         core.setFailed(error.message);
+        return undefined;
     }
 }
 
@@ -52,7 +62,7 @@ try {
         uploadThroughputKbps: 0,
     };
 
-    (async () => {
+    (async (): Promise<void> => {
         const urlsInput = core.getInput('urls');
         const performanceThreshold = core.getInput('performanceThreshold');
         const accessibilityThreshold = core.getInput('accessibilityThreshold');
@@ -67,14 +77,6 @@ try {
             SEO: SEOThreshold,
             'Progressive Web App': PWAThreshold,
         };
-
-        Object.keys(thesholds).forEach((title) => {
-            core.info(
-                `You enforced a minimum value of ${thesholds[title]} for the catefory ${title}`
-            );
-        });
-
-        // const urls = urlsInput.split(',');
 
         const chrome = await launch({
             chromeFlags: ['--headless'],
@@ -107,11 +109,17 @@ try {
 
         const results = gatherResults(runnerResult.lhr.categories);
 
-        let errors = [];
+        const errors: Error[] = [];
 
         results.forEach(({ title, score }) => {
-            const scoreThreshold = thesholds[title];
-            if (score < scoreThreshold) errors.push({ title, score });
+            const castedTitle = title as keyof typeof thesholds;
+            const value = Number(thesholds[castedTitle]);
+
+            core.info(
+                `You enforced a minimum value of ${value} for the catefory ${castedTitle}`
+            );
+
+            if (score < value) errors.push({ title, score });
             else
                 core.info(
                     `You did meet the threshold values you provided for the category ${title} with a score of ${score}`
