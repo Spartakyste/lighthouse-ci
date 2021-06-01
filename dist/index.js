@@ -32,7 +32,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadArtifact = void 0;
-//@ts-nocheck
 const core = __importStar(require("@actions/core"));
 const artifact = __importStar(require("@actions/artifact"));
 const lighthouse_1 = __importDefault(require("lighthouse"));
@@ -40,8 +39,9 @@ const chrome_launcher_1 = require("chrome-launcher");
 const fs_1 = __importDefault(require("fs"));
 function gatherResults(categories) {
     return Object.keys(categories).map((key) => {
-        const title = categories[key].title;
-        const score = categories[key].score * 100;
+        const casted = key;
+        const { title } = categories[casted];
+        const score = categories[casted].score * 100;
         return {
             title,
             score,
@@ -51,7 +51,6 @@ function gatherResults(categories) {
 function uploadArtifact() {
     try {
         const resultsPath = `${process.cwd()}/files`;
-        console.log(`resultsPath`, resultsPath);
         const artifactClient = artifact.create();
         const fileNames = fs_1.default.readdirSync(resultsPath);
         const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
@@ -59,6 +58,7 @@ function uploadArtifact() {
     }
     catch (error) {
         core.setFailed(error.message);
+        return undefined;
     }
 }
 exports.uploadArtifact = uploadArtifact;
@@ -72,12 +72,12 @@ try {
         uploadThroughputKbps: 0,
     };
     (() => __awaiter(void 0, void 0, void 0, function* () {
-        const urlsInput = core.getInput('urls') || 'http://localhost:3000';
-        const performanceThreshold = core.getInput('performanceThreshold');
-        const accessibilityThreshold = core.getInput('accessibilityThreshold');
-        const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
-        const PWAThreshold = core.getInput('PWAThreshold');
-        const SEOThreshold = core.getInput('SEOThreshold');
+        const urlsInput = core.getInput('urls');
+        const performanceThreshold = Number(core.getInput('performanceThreshold'));
+        const accessibilityThreshold = Number(core.getInput('accessibilityThreshold'));
+        const bestPracticesThreshold = Number(core.getInput('bestPracticesThreshold'));
+        const PWAThreshold = Number(core.getInput('PWAThreshold'));
+        const SEOThreshold = Number(core.getInput('SEOThreshold'));
         const thesholds = {
             Performance: performanceThreshold,
             Accessibility: accessibilityThreshold,
@@ -85,10 +85,6 @@ try {
             SEO: SEOThreshold,
             'Progressive Web App': PWAThreshold,
         };
-        Object.keys(thesholds).forEach((title) => {
-            core.info(`You enforced a minimum value of ${thesholds[title]} for the catefory ${title}`);
-        });
-        // const urls = urlsInput.split(',');
         const chrome = yield chrome_launcher_1.launch({
             chromeFlags: ['--headless'],
         });
@@ -109,15 +105,16 @@ try {
             emulatedUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Safari/537.36 Chrome-Lighthouse',
         };
         const runnerResult = yield lighthouse_1.default(urlsInput, options);
-        // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
         yield fs_1.default.promises.mkdir('files');
         fs_1.default.writeFileSync('files/lhreport.html', reportHtml);
         const results = gatherResults(runnerResult.lhr.categories);
-        let errors = [];
+        const errors = [];
         results.forEach(({ title, score }) => {
-            const scoreThreshold = thesholds[title];
-            if (score < scoreThreshold)
+            const castedTitle = title;
+            const value = thesholds[castedTitle];
+            core.info(`You enforced a minimum value of ${value} for the category ${castedTitle}`);
+            if (score < value)
                 errors.push({ title, score });
             else
                 core.info(`You did meet the threshold values you provided for the category ${title} with a score of ${score}`);
@@ -125,8 +122,10 @@ try {
         core.info('Uploading artifact ...');
         yield uploadArtifact();
         core.info('Upload is over');
+        core.info('Removing the report ...');
         fs_1.default.unlinkSync('./files/lhreport.html');
         yield fs_1.default.promises.rmdir('files');
+        core.info('Report removed');
         if (errors.length > 0) {
             errors.forEach((err) => {
                 core.error(`You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`);
