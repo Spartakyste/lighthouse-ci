@@ -26,6 +26,14 @@ export interface LighthouseCategories {
     };
 }
 
+export interface Thresholds {
+    Performance: number;
+    Accessibility: number;
+    SEO: number;
+    'Best Practices': number;
+    'Progressive Web App': number;
+}
+
 export interface Result {
     title: string;
     score: number;
@@ -34,4 +42,13 @@ export interface Result {
 export interface Error {
     title: string;
     score: number;
+}
+
+export interface Inputs {
+    urlsInput: string;
+    performanceThreshold: number;
+    accessibilityThreshold: number;
+    bestPracticesThreshold: number;
+    PWAThreshold: number;
+    SEOThreshold: number;
 }
