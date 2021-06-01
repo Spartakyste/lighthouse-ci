@@ -1,9 +1,9 @@
 - Add default values into the action.yml
 - Add prettier
 - Add linter
-- Remove the default value for url
 - Add tests
 - Add husky
 - Clean / Split code in the index.ts
 - Add a quiet option that remove all unecessary core.whatever
 - Add comment on PR feature
+- Make it work with multiple urls

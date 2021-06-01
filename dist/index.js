@@ -108,7 +108,6 @@ try {
             emulatedUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4420.0 Safari/537.36 Chrome-Lighthouse',
         };
         const runnerResult = yield lighthouse_1.default(urlsInput, options);
-        // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
         yield fs_1.default.promises.mkdir('files');
         fs_1.default.writeFileSync('files/lhreport.html', reportHtml);

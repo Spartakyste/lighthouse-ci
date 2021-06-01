@@ -100,7 +100,6 @@ try {
         };
         const runnerResult = await lighthouse(urlsInput, options);
 
-        // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
 
         await fs.promises.mkdir('files');
