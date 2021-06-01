@@ -1,41 +1,10 @@
 import * as core from '@actions/core';
-import * as artifact from '@actions/artifact';
+//@ts-ignore
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
-import { LighthouseCategories, Result, Error } from 'interfaces';
-
-function gatherResults(categories: LighthouseCategories): Result[] {
-    return Object.keys(categories).map((key) => {
-        const casted = key as keyof LighthouseCategories;
-
-        const { title } = categories[casted];
-        const score = categories[casted].score * 100;
-        return {
-            title,
-            score,
-        };
-    });
-}
-
-export function uploadArtifact(): Promise<artifact.UploadResponse> | void {
-    try {
-        const resultsPath = `${process.cwd()}/files`;
-
-        const artifactClient = artifact.create();
-        const fileNames = fs.readdirSync(resultsPath);
-        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
-        return artifactClient.uploadArtifact(
-            'Lighthouse-results',
-            files,
-            resultsPath,
-            { continueOnError: true }
-        );
-    } catch (error) {
-        core.setFailed(error.message);
-        return undefined;
-    }
-}
+import { Error } from 'interfaces';
+import { gatherResults, uploadArtifact } from 'utils';
 
 try {
     const fast4GOptions = {
@@ -48,7 +17,7 @@ try {
     };
 
     (async (): Promise<void> => {
-        const urlsInput = core.getInput('urls');
+        const urlsInput = core.getInput('urls') || 'http://localhost:3000/fr';
         const performanceThreshold = Number(
             core.getInput('performanceThreshold')
         );
@@ -97,7 +66,7 @@ try {
 
         await fs.promises.mkdir('files');
         fs.writeFileSync('files/lhreport.html', reportHtml);
-
+        console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
         const results = gatherResults(runnerResult.lhr.categories);
 
         const errors: Error[] = [];
