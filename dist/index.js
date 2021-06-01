@@ -113,10 +113,7 @@ try {
         const reportHtml = runnerResult.report;
         yield fs_1.default.promises.mkdir('files');
         fs_1.default.writeFileSync('files/lhreport.html', reportHtml);
-        console.log('Report is done for', runnerResult.lhr.finalUrl);
-        // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
         const results = gatherResults(runnerResult.lhr.categories);
-        console.log(`results`, results);
         let errors = [];
         results.forEach(({ title, score }) => {
             const scoreThreshold = thesholds[title];
@@ -126,7 +123,7 @@ try {
                 core.info(`You did meet the threshold values you provided for the category ${title} with a score of ${score}`);
         });
         core.info('Uploading artifact ...');
-        // await uploadArtifact();
+        yield uploadArtifact();
         core.info('Upload is over');
         fs_1.default.unlinkSync('./files/lhreport.html');
         yield fs_1.default.promises.rmdir('files');
@@ -134,7 +131,7 @@ try {
             errors.forEach((err) => {
                 core.error(`You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`);
             });
-            core.setFailed("Thresholds weren't meet");
+            core.setFailed("Thresholds weren't meet, check the artifact");
         }
         yield chrome.kill();
     }))();
