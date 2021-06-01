@@ -27,7 +27,7 @@ function gatherResults(categories: LighthouseCategories) {
 export function uploadArtifact() {
     try {
         const resultsPath = `${process.cwd()}/files`;
-        console.log(`resultsPath`, resultsPath);
+
         const artifactClient = artifact.create();
         const fileNames = fs.readdirSync(resultsPath);
         const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
@@ -53,7 +53,7 @@ try {
     };
 
     (async () => {
-        const urlsInput = core.getInput('urls') || 'http://localhost:3000';
+        const urlsInput = core.getInput('urls');
         const performanceThreshold = core.getInput('performanceThreshold');
         const accessibilityThreshold = core.getInput('accessibilityThreshold');
         const bestPracticesThreshold = core.getInput('bestPracticesThreshold');

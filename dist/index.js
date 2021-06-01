@@ -51,7 +51,6 @@ function gatherResults(categories) {
 function uploadArtifact() {
     try {
         const resultsPath = `${process.cwd()}/files`;
-        console.log(`resultsPath`, resultsPath);
         const artifactClient = artifact.create();
         const fileNames = fs_1.default.readdirSync(resultsPath);
         const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
@@ -72,7 +71,7 @@ try {
         uploadThroughputKbps: 0,
     };
     (() => __awaiter(void 0, void 0, void 0, function* () {
-        const urlsInput = core.getInput('urls') || 'http://localhost:3000';
+        const urlsInput = core.getInput('urls');
         const performanceThreshold = core.getInput('performanceThreshold');
         const accessibilityThreshold = core.getInput('accessibilityThreshold');
         const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
