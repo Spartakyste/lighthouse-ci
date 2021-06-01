@@ -85,6 +85,9 @@ try {
             SEO: SEOThreshold,
             'Progressive Web App': PWAThreshold,
         };
+        Object.keys(thesholds).forEach((title) => {
+            core.info(`You enforced a minimum value of ${thesholds[title]} for the catefory ${title}`);
+        });
         // const urls = urlsInput.split(',');
         const chrome = yield chrome_launcher_1.launch({
             chromeFlags: ['--headless'],
@@ -113,6 +116,7 @@ try {
         console.log('Report is done for', runnerResult.lhr.finalUrl);
         // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
         const results = gatherResults(runnerResult.lhr.categories);
+        console.log(`results`, results);
         let errors = [];
         results.forEach(({ title, score }) => {
             const scoreThreshold = thesholds[title];
@@ -122,7 +126,7 @@ try {
                 core.info(`You did meet the threshold values you provided for the category ${title} with a score of ${score}`);
         });
         core.info('Uploading artifact ...');
-        yield uploadArtifact();
+        // await uploadArtifact();
         core.info('Upload is over');
         fs_1.default.unlinkSync('./files/lhreport.html');
         yield fs_1.default.promises.rmdir('files');

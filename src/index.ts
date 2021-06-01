@@ -28,11 +28,16 @@ function gatherResults(categories: LighthouseCategories) {
 export function uploadArtifact() {
     try {
         const resultsPath = `${process.cwd()}/files`;
-        console.log(`resultsPath`, resultsPath)
-        const artifactClient = artifact.create()
+        console.log(`resultsPath`, resultsPath);
+        const artifactClient = artifact.create();
         const fileNames = fs.readdirSync(resultsPath);
-        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`)
-        return artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true })
+        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
+        return artifactClient.uploadArtifact(
+            'Lighthouse-results',
+            files,
+            resultsPath,
+            { continueOnError: true }
+        );
     } catch (error) {
         core.setFailed(error.message);
     }
@@ -64,6 +69,12 @@ try {
             'Progressive Web App': PWAThreshold,
         };
 
+        Object.keys(thesholds).forEach((title) => {
+            core.info(
+                `You enforced a minimum value of ${thesholds[title]} for the catefory ${title}`
+            );
+        });
+
         // const urls = urlsInput.split(',');
 
         const chrome = await launch({
@@ -92,7 +103,7 @@ try {
 
         // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
-        
+
         await fs.promises.mkdir('files');
         fs.writeFileSync('files/lhreport.html', reportHtml);
 
@@ -100,23 +111,24 @@ try {
         // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
 
         const results = gatherResults(runnerResult.lhr.categories);
-
+        console.log(`results`, results);
         let errors = [];
 
         results.forEach(({ title, score }) => {
             const scoreThreshold = thesholds[title];
             if (score < scoreThreshold) errors.push({ title, score });
-            else core.info(
-                `You did meet the threshold values you provided for the category ${title} with a score of ${score}`
-            );
+            else
+                core.info(
+                    `You did meet the threshold values you provided for the category ${title} with a score of ${score}`
+                );
         });
 
         core.info('Uploading artifact ...');
-        await uploadArtifact();
+        // await uploadArtifact();
         core.info('Upload is over');
 
         fs.unlinkSync('./files/lhreport.html');
-        await fs.promises.rmdir('files')
+        await fs.promises.rmdir('files');
 
         if (errors.length > 0) {
             errors.forEach((err) => {
