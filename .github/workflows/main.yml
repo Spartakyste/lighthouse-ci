@@ -9,8 +9,8 @@ jobs:
         uses: Spartakyste/lighthouse-ci@ci/creation
         with:
           urls: 'http://localhost:3000/fr'
-          performanceTreshold: 90
-          accessibilityTreshold: 90
-          bestPracticesTreshold: 90
-          SEOTreshold: 90
-          PWATreshold: 90
+          performanceThreshold: 90
+          accessibilityThreshold: 90
+          bestPracticesThreshold: 90
+          SEOThreshold: 90
+          PWAThreshold: 90

@@ -5,19 +5,19 @@ inputs:
     description: "The urls to test"
     required: true
     default: ""
-  performanceTreshold:
+  performanceThreshold:
     description: "A treshold value for the performance category"
     required: false
-  accessibilityTreshold:
+  accessibilityThreshold:
      description: "A treshold value for the accessibility category"
      required: false
-  bestPracticesTreshold: 
+  bestPracticesThreshold: 
     description: "A treshold value for the best pratices category"
     required: false
-  SEOTreshold: 
+  SEOThreshold: 
      description: "A treshold value for the SEO category"
      required: false
-  PWATreshold:  
+  PWAThreshold:  
     description: "A treshold value for the PWA category"
     required: false
 runs:
