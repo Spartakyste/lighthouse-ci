@@ -4,7 +4,6 @@ import * as artifact from '@actions/artifact';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
-import join from 'path';
 
 interface LighthouseCategories {
     [categorie: string]: {
@@ -107,11 +106,8 @@ try {
         await fs.promises.mkdir('files');
         fs.writeFileSync('files/lhreport.html', reportHtml);
 
-        console.log('Report is done for', runnerResult.lhr.finalUrl);
-        // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
-
         const results = gatherResults(runnerResult.lhr.categories);
-        console.log(`results`, results);
+
         let errors = [];
 
         results.forEach(({ title, score }) => {
@@ -124,7 +120,7 @@ try {
         });
 
         core.info('Uploading artifact ...');
-        // await uploadArtifact();
+        await uploadArtifact();
         core.info('Upload is over');
 
         fs.unlinkSync('./files/lhreport.html');
@@ -136,7 +132,7 @@ try {
                     `You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`
                 );
             });
-            core.setFailed("Thresholds weren't meet");
+            core.setFailed("Thresholds weren't meet, check the artifact");
         }
         await chrome.kill();
     })();
