@@ -51,6 +51,7 @@ function gatherResults(categories) {
 function uploadArtifact() {
     try {
         const resultsPath = `${process.cwd()}/files`;
+        console.log(`resultsPath`, resultsPath);
         const artifactClient = artifact.create();
         const fileNames = fs_1.default.readdirSync(resultsPath);
         const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
@@ -71,7 +72,7 @@ try {
         uploadThroughputKbps: 0,
     };
     (() => __awaiter(void 0, void 0, void 0, function* () {
-        const urlsInput = core.getInput('urls');
+        const urlsInput = core.getInput('urls') || 'http://localhost:3000';
         const performanceThreshold = core.getInput('performanceThreshold');
         const accessibilityThreshold = core.getInput('accessibilityThreshold');
         const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
@@ -107,6 +108,7 @@ try {
         const runnerResult = yield lighthouse_1.default(urlsInput, options);
         // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
+        yield fs_1.default.promises.mkdir('files');
         fs_1.default.writeFileSync('files/lhreport.html', reportHtml);
         console.log('Report is done for', runnerResult.lhr.finalUrl);
         // console.log(`runnerResult.lhr.categories`, runnerResult.lhr.categories);
@@ -118,9 +120,10 @@ try {
                 errors.push({ title, score });
         });
         core.info('Uploading artifact ...');
-        yield uploadArtifact();
+        // await uploadArtifact();
         core.info('Upload is over');
         fs_1.default.unlinkSync('./files/lhreport.html');
+        yield fs_1.default.promises.rmdir('files');
         if (errors.length > 0) {
             errors.forEach((err) => {
                 core.error(`You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`);

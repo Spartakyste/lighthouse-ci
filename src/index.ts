@@ -13,6 +13,7 @@ interface LighthouseCategories {
         description: string;
     };
 }
+
 function gatherResults(categories: LighthouseCategories) {
     return Object.keys(categories).map((key) => {
         const title = categories[key].title;
@@ -27,6 +28,7 @@ function gatherResults(categories: LighthouseCategories) {
 export function uploadArtifact() {
     try {
         const resultsPath = `${process.cwd()}/files`;
+        console.log(`resultsPath`, resultsPath)
         const artifactClient = artifact.create()
         const fileNames = fs.readdirSync(resultsPath);
         const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`)
@@ -47,7 +49,7 @@ try {
     };
 
     (async () => {
-        const urlsInput = core.getInput('urls');
+        const urlsInput = core.getInput('urls') || 'http://localhost:3000';
         const performanceThreshold = core.getInput('performanceThreshold');
         const accessibilityThreshold = core.getInput('accessibilityThreshold');
         const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
@@ -90,6 +92,8 @@ try {
 
         // `.report` is the HTML report as a string
         const reportHtml = runnerResult.report;
+        
+        await fs.promises.mkdir('files');
         fs.writeFileSync('files/lhreport.html', reportHtml);
 
         console.log('Report is done for', runnerResult.lhr.finalUrl);
@@ -109,6 +113,7 @@ try {
         core.info('Upload is over');
 
         fs.unlinkSync('./files/lhreport.html');
+        await fs.promises.rmdir('files')
 
         if (errors.length > 0) {
             errors.forEach((err) => {
