@@ -39,8 +39,9 @@ const chrome_launcher_1 = require("chrome-launcher");
 const fs_1 = __importDefault(require("fs"));
 function gatherResults(categories) {
     return Object.keys(categories).map((key) => {
-        const { title } = categories[key];
-        const score = categories[key].score * 100;
+        const casted = key;
+        const { title } = categories[casted];
+        const score = categories[casted].score * 100;
         return {
             title,
             score,
@@ -72,11 +73,11 @@ try {
     };
     (() => __awaiter(void 0, void 0, void 0, function* () {
         const urlsInput = core.getInput('urls');
-        const performanceThreshold = core.getInput('performanceThreshold');
-        const accessibilityThreshold = core.getInput('accessibilityThreshold');
-        const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
-        const PWAThreshold = core.getInput('PWAThreshold');
-        const SEOThreshold = core.getInput('SEOThreshold');
+        const performanceThreshold = Number(core.getInput('performanceThreshold'));
+        const accessibilityThreshold = Number(core.getInput('accessibilityThreshold'));
+        const bestPracticesThreshold = Number(core.getInput('bestPracticesThreshold'));
+        const PWAThreshold = Number(core.getInput('PWAThreshold'));
+        const SEOThreshold = Number(core.getInput('SEOThreshold'));
         const thesholds = {
             Performance: performanceThreshold,
             Accessibility: accessibilityThreshold,
@@ -111,8 +112,8 @@ try {
         const errors = [];
         results.forEach(({ title, score }) => {
             const castedTitle = title;
-            const value = Number(thesholds[castedTitle]);
-            core.info(`You enforced a minimum value of ${value} for the catefory ${castedTitle}`);
+            const value = thesholds[castedTitle];
+            core.info(`You enforced a minimum value of ${value} for the category ${castedTitle}`);
             if (score < value)
                 errors.push({ title, score });
             else
@@ -121,8 +122,10 @@ try {
         core.info('Uploading artifact ...');
         yield uploadArtifact();
         core.info('Upload is over');
+        core.info('Removing the report ...');
         fs_1.default.unlinkSync('./files/lhreport.html');
         yield fs_1.default.promises.rmdir('files');
+        core.info('Report removed');
         if (errors.length > 0) {
             errors.forEach((err) => {
                 core.error(`You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`);

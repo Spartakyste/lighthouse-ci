@@ -3,29 +3,14 @@ import * as artifact from '@actions/artifact';
 import lighthouse from 'lighthouse';
 import { launch } from 'chrome-launcher';
 import fs from 'fs';
+import { LighthouseCategories, Result, Error } from 'interfaces';
 
-interface LighthouseCategories {
-    [categorie: string]: {
-        title: string;
-        score: number;
-        description: string;
-    };
-}
-
-interface Results {
-    title: string;
-    score: number;
-}
-
-interface Error {
-    title: string;
-    score: number;
-}
-
-function gatherResults(categories: LighthouseCategories): Results[] {
+function gatherResults(categories: LighthouseCategories): Result[] {
     return Object.keys(categories).map((key) => {
-        const { title } = categories[key];
-        const score = categories[key].score * 100;
+        const casted = key as keyof LighthouseCategories;
+
+        const { title } = categories[casted];
+        const score = categories[casted].score * 100;
         return {
             title,
             score,
@@ -64,11 +49,17 @@ try {
 
     (async (): Promise<void> => {
         const urlsInput = core.getInput('urls');
-        const performanceThreshold = core.getInput('performanceThreshold');
-        const accessibilityThreshold = core.getInput('accessibilityThreshold');
-        const bestPracticesThreshold = core.getInput('bestPracticesThreshold');
-        const PWAThreshold = core.getInput('PWAThreshold');
-        const SEOThreshold = core.getInput('SEOThreshold');
+        const performanceThreshold = Number(
+            core.getInput('performanceThreshold')
+        );
+        const accessibilityThreshold = Number(
+            core.getInput('accessibilityThreshold')
+        );
+        const bestPracticesThreshold = Number(
+            core.getInput('bestPracticesThreshold')
+        );
+        const PWAThreshold = Number(core.getInput('PWAThreshold'));
+        const SEOThreshold = Number(core.getInput('SEOThreshold'));
 
         const thesholds = {
             Performance: performanceThreshold,
@@ -113,10 +104,10 @@ try {
 
         results.forEach(({ title, score }) => {
             const castedTitle = title as keyof typeof thesholds;
-            const value = Number(thesholds[castedTitle]);
+            const value = thesholds[castedTitle];
 
             core.info(
-                `You enforced a minimum value of ${value} for the catefory ${castedTitle}`
+                `You enforced a minimum value of ${value} for the category ${castedTitle}`
             );
 
             if (score < value) errors.push({ title, score });
@@ -130,8 +121,10 @@ try {
         await uploadArtifact();
         core.info('Upload is over');
 
+        core.info('Removing the report ...');
         fs.unlinkSync('./files/lhreport.html');
         await fs.promises.rmdir('files');
+        core.info('Report removed');
 
         if (errors.length > 0) {
             errors.forEach((err) => {
