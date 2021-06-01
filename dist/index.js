@@ -118,6 +118,8 @@ try {
             const scoreThreshold = thesholds[title];
             if (score < scoreThreshold)
                 errors.push({ title, score });
+            else
+                core.info(`You did meet the threshold values you provided for the category ${title} with a score of ${score}`);
         });
         core.info('Uploading artifact ...');
         yield uploadArtifact();
