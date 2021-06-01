@@ -1,6 +1,4 @@
 - Add default values into the action.yml
-- Add prettier
-- Add linter
 - Add tests
 - Add husky
 - Clean / Split code in the index.ts
