@@ -8,7 +8,7 @@ import {
     launchLighthouse,
     saveReport,
     uploadArtifact,
-} from 'utils';
+} from './utils';
 
 export async function start(): Promise<void> {
     const {

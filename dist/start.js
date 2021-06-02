@@ -31,7 +31,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.start = void 0;
 const chrome_launcher_1 = require("chrome-launcher");
 const core = __importStar(require("@actions/core"));
-const utils_1 = require("utils");
+const utils_1 = require("./utils");
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
         const { urlsInput, performanceThreshold, accessibilityThreshold, bestPracticesThreshold, PWAThreshold, SEOThreshold, } = utils_1.getInputs();

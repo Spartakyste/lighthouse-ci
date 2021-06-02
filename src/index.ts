@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import * as core from '@actions/core';
-import { start } from 'start';
+import { start } from './start';
 
 try {
     start();
