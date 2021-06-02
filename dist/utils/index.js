@@ -156,6 +156,7 @@ function sendPrComment(token) {
             const abc = new rest_1.Octokit({
                 authStrategy: auth_app_1.createAppAuth,
                 auth: {
+                    appId: 123,
                     token,
                 },
             });

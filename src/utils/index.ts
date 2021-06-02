@@ -153,6 +153,7 @@ export function sendPrComment(token: string): void {
             const abc = new Octokit({
                 authStrategy: createAppAuth,
                 auth: {
+                    appId: 123,
                     token,
                 },
             });
