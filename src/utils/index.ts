@@ -12,6 +12,7 @@ import {
 import lighthouse from 'lighthouse';
 import { LaunchedChrome } from 'chrome-launcher';
 
+/* istanbul ignore next */
 export async function launchLighthouse(
     chrome: LaunchedChrome,
     urls: string
@@ -47,6 +48,27 @@ export async function launchLighthouse(
     return lighthouse(urls, options);
 }
 
+/* istanbul ignore next */
+export function uploadArtifact(): Promise<void> | void {
+    try {
+        const resultsPath = `${process.cwd()}/files`;
+
+        const artifactClient = artifact.create();
+        const fileNames = fs.readdirSync(resultsPath);
+        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
+        artifactClient.uploadArtifact(
+            'Lighthouse-results',
+            files,
+            resultsPath,
+            { continueOnError: true }
+        );
+        return undefined;
+    } catch (error) {
+        core.setFailed(error.message);
+        return undefined;
+    }
+}
+
 export function gatherResults(categories: LighthouseCategories): Result[] {
     return Object.keys(categories).map((key) => {
         const casted = key as keyof LighthouseCategories;
@@ -58,25 +80,6 @@ export function gatherResults(categories: LighthouseCategories): Result[] {
             score,
         };
     });
-}
-
-export function uploadArtifact(): Promise<artifact.UploadResponse> | void {
-    try {
-        const resultsPath = `${process.cwd()}/files`;
-
-        const artifactClient = artifact.create();
-        const fileNames = fs.readdirSync(resultsPath);
-        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
-        return artifactClient.uploadArtifact(
-            'Lighthouse-results',
-            files,
-            resultsPath,
-            { continueOnError: true }
-        );
-    } catch (error) {
-        core.setFailed(error.message);
-        return undefined;
-    }
 }
 
 export function getInputs(): Inputs {
