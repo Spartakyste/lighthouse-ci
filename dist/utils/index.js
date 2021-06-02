@@ -121,7 +121,6 @@ function buildErrors(results, thesholds) {
     results.forEach(({ title, score }) => {
         const castedTitle = title;
         const value = thesholds[castedTitle];
-        core.info(`You enforced a minimum value of ${value} for the category ${castedTitle}`);
         if (score < value)
             errors.push({ title, score });
         else
@@ -144,8 +143,15 @@ function deleteReport() {
     });
 }
 exports.deleteReport = deleteReport;
-function buildCommentText(results) {
-    let text = 'Here are your Lighthouse scores :';
+function buildCommentText(results, hasErrors) {
+    let text = '';
+    if (hasErrors) {
+        text += 'The action failed. ';
+    }
+    else {
+        text += 'The action succeed. ';
+    }
+    text += 'Here are your Lighthouse scores :';
     results.forEach((result, index) => {
         if (index === 0) {
             text += `\n\t- ${result.title}, with a score of ${result.score}.\n`;

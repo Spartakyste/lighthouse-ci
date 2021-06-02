@@ -61,36 +61,4 @@ describe('Testing the start function', () => {
         expect(saveReportSpy).toHaveBeenCalledTimes(1);
         expect(deleteReportSpy).toHaveBeenCalledTimes(1);
     });
-
-    test('Launch everything but with errors, should log them', async () => {
-        jest.spyOn(utils, 'getInputs').mockImplementationOnce(() => fakeInputs);
-
-        jest.spyOn(utils, 'launchLighthouse').mockResolvedValueOnce({
-            report: '',
-            lhr: {
-                categories: lighthouseResults100,
-            },
-        });
-
-        jest.spyOn(utils, 'gatherResults').mockImplementationOnce(
-            () => fakeResults100
-        );
-
-        jest.spyOn(utils, 'buildErrors').mockImplementationOnce(
-            () => fakeErrors
-        );
-
-        jest.spyOn(utils, 'saveReport').mockResolvedValueOnce(undefined);
-        jest.spyOn(utils, 'deleteReport').mockResolvedValueOnce(undefined);
-
-        jest.spyOn(utils, 'sendPrComment').mockResolvedValueOnce(undefined);
-
-        jest.spyOn(utils, 'uploadArtifact').mockResolvedValueOnce(undefined);
-
-        const coreSpy = jest.spyOn(core, 'error');
-
-        await start();
-
-        expect(coreSpy).toHaveBeenCalledTimes(fakeErrors.length);
-    });
 });

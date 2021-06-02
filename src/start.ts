@@ -52,17 +52,14 @@ export async function start(): Promise<void> {
     await deleteReport();
     core.info('Report removed');
 
+    const hasErrors = errors.length > 0;
+
     core.info('Posting comment ...');
-    const commentText = buildCommentText(results);
+    const commentText = buildCommentText(results, hasErrors);
     await sendPrComment(token, commentText);
     core.info('Comment done');
 
-    if (errors.length > 0) {
-        errors.forEach((err) => {
-            core.error(
-                `You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`
-            );
-        });
+    if (hasErrors) {
         core.setFailed("Thresholds weren't meet, check the artifact");
     }
 

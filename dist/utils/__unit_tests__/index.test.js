@@ -94,7 +94,11 @@ describe('Testing the deleteReport', () => {
 });
 describe('Testing the buildCommentText', () => {
     test('Should return a text with the results', () => {
-        const results = utils_1.buildCommentText(mocks_1.fakeResults100);
+        const results = utils_1.buildCommentText(mocks_1.fakeResults100, true);
+        expect(results).toMatchSnapshot();
+    });
+    test('Should return a text with the results', () => {
+        const results = utils_1.buildCommentText(mocks_1.fakeResults100, false);
         expect(results).toMatchSnapshot();
     });
 });

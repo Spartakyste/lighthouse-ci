@@ -133,7 +133,12 @@ describe('Testing the deleteReport', () => {
 
 describe('Testing the buildCommentText', () => {
     test('Should return a text with the results', () => {
-        const results = buildCommentText(fakeResults100);
+        const results = buildCommentText(fakeResults100, true);
+        expect(results).toMatchSnapshot();
+    });
+
+    test('Should return a text with the results', () => {
+        const results = buildCommentText(fakeResults100, false);
         expect(results).toMatchSnapshot();
     });
 });

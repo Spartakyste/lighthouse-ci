@@ -115,10 +115,6 @@ export function buildErrors(results: Result[], thesholds: Thresholds): Error[] {
         const castedTitle = title as keyof typeof thesholds;
         const value = thesholds[castedTitle];
 
-        core.info(
-            `You enforced a minimum value of ${value} for the category ${castedTitle}`
-        );
-
         if (score < value) errors.push({ title, score });
         else
             core.info(
@@ -138,8 +134,19 @@ export async function deleteReport(): Promise<void> {
     await fs.promises.rmdir('files');
 }
 
-export function buildCommentText(results: Result[]): string {
-    let text = 'Here are your Lighthouse scores :';
+export function buildCommentText(
+    results: Result[],
+    hasErrors: boolean
+): string {
+    let text = '';
+
+    if (hasErrors) {
+        text += 'The action failed. ';
+    } else {
+        text += 'The action succeed. ';
+    }
+
+    text += 'Here are your Lighthouse scores :';
 
     results.forEach((result, index) => {
         if (index === 0) {
