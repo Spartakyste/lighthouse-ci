@@ -31,7 +31,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendPrComment = exports.deleteReport = exports.saveReport = exports.buildErrors = exports.getInputs = exports.gatherResults = exports.uploadArtifact = exports.launchLighthouse = void 0;
+exports.sendPrComment = exports.buildCommentText = exports.deleteReport = exports.saveReport = exports.buildErrors = exports.getInputs = exports.gatherResults = exports.uploadArtifact = exports.launchLighthouse = void 0;
 const fs_1 = __importDefault(require("fs"));
 const core = __importStar(require("@actions/core"));
 const artifact = __importStar(require("@actions/artifact"));
@@ -144,7 +144,20 @@ function deleteReport() {
     });
 }
 exports.deleteReport = deleteReport;
-function sendPrComment(token) {
+function buildCommentText(results) {
+    let text = 'Here are your Lighthouse scores :';
+    results.forEach((result, index) => {
+        if (index === 0) {
+            text += `\n\t- ${result.title}, with a score of ${result.score}.\n`;
+        }
+        else {
+            text += `\t- ${result.title}, with a score of ${result.score}.\n`;
+        }
+    });
+    return text;
+}
+exports.buildCommentText = buildCommentText;
+function sendPrComment(token, text) {
     return __awaiter(this, void 0, void 0, function* () {
         const { payload: { pull_request: pullRequest, repository }, } = github.context;
         if (repository) {
@@ -157,14 +170,13 @@ function sendPrComment(token) {
                     owner,
                     repo,
                     issue_number: prNumber,
-                    body: 'This is a test',
+                    body: text,
                 });
             }
         }
         else {
             core.error('No pull request was found');
         }
-        console.log(`pullRequest`, pullRequest);
     });
 }
 exports.sendPrComment = sendPrComment;

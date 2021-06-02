@@ -83,6 +83,8 @@ describe('Testing the start function', () => {
         jest.spyOn(utils, 'saveReport').mockResolvedValueOnce(undefined);
         jest.spyOn(utils, 'deleteReport').mockResolvedValueOnce(undefined);
 
+        jest.spyOn(utils, 'sendPrComment').mockResolvedValueOnce(undefined);
+
         jest.spyOn(utils, 'uploadArtifact').mockResolvedValueOnce(undefined);
 
         const coreSpy = jest.spyOn(core, 'error');

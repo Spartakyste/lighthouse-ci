@@ -84,6 +84,7 @@ describe('Testing the start function', () => {
         jest.spyOn(utils, 'buildErrors').mockImplementationOnce(() => mocks_1.fakeErrors);
         jest.spyOn(utils, 'saveReport').mockResolvedValueOnce(undefined);
         jest.spyOn(utils, 'deleteReport').mockResolvedValueOnce(undefined);
+        jest.spyOn(utils, 'sendPrComment').mockResolvedValueOnce(undefined);
         jest.spyOn(utils, 'uploadArtifact').mockResolvedValueOnce(undefined);
         const coreSpy = jest.spyOn(core, 'error');
         yield start_1.start();

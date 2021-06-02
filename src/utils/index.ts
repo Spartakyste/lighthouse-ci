@@ -138,7 +138,24 @@ export async function deleteReport(): Promise<void> {
     await fs.promises.rmdir('files');
 }
 
-export async function sendPrComment(token: string): Promise<void> {
+export function buildCommentText(results: Result[]): string {
+    let text = 'Here are your Lighthouse scores :';
+
+    results.forEach((result, index) => {
+        if (index === 0) {
+            text += `\n\t- ${result.title}, with a score of ${result.score}.\n`;
+        } else {
+            text += `\t- ${result.title}, with a score of ${result.score}.\n`;
+        }
+    });
+
+    return text;
+}
+
+export async function sendPrComment(
+    token: string,
+    text: string
+): Promise<void> {
     const {
         payload: { pull_request: pullRequest, repository },
     } = github.context;
@@ -156,12 +173,10 @@ export async function sendPrComment(token: string): Promise<void> {
                 owner,
                 repo,
                 issue_number: prNumber,
-                body: 'This is a test',
+                body: text,
             });
         }
     } else {
         core.error('No pull request was found');
     }
-
-    console.log(`pullRequest`, pullRequest);
 }

@@ -7,6 +7,7 @@ import {
     lighthouseResults50,
 } from 'mocks';
 import {
+    buildCommentText,
     buildErrors,
     deleteReport,
     gatherResults,
@@ -130,4 +131,9 @@ describe('Testing the deleteReport', () => {
     });
 });
 
-// describe('Testing the sendPrComment', () => {});
+describe('Testing the buildCommentText', () => {
+    test('Should return a text with the results', () => {
+        const results = buildCommentText(fakeResults100);
+        expect(results).toMatchSnapshot();
+    });
+});

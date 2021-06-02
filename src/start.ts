@@ -9,6 +9,7 @@ import {
     saveReport,
     uploadArtifact,
     sendPrComment,
+    buildCommentText,
 } from './utils';
 
 export async function start(): Promise<void> {
@@ -52,7 +53,8 @@ export async function start(): Promise<void> {
     core.info('Report removed');
 
     core.info('Posting comment ...');
-    await sendPrComment(token);
+    const commentText = buildCommentText(results);
+    await sendPrComment(token, commentText);
     core.info('Comment done');
 
     if (errors.length > 0) {

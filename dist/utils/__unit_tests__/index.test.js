@@ -92,4 +92,9 @@ describe('Testing the deleteReport', () => {
         expect(unlynkFileSpy).toHaveBeenCalledWith('./files/lhreport.html');
     }));
 });
-// describe('Testing the sendPrComment', () => {});
+describe('Testing the buildCommentText', () => {
+    test('Should return a text with the results', () => {
+        const results = utils_1.buildCommentText(mocks_1.fakeResults100);
+        expect(results).toMatchSnapshot();
+    });
+});
