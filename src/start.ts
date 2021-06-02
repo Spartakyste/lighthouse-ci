@@ -52,7 +52,7 @@ export async function start(): Promise<void> {
     core.info('Report removed');
 
     core.info('Posting comment ...');
-    sendPrComment(token);
+    await sendPrComment(token);
     core.info('Comment done');
 
     if (errors.length > 0) {

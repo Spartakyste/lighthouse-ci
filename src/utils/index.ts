@@ -138,7 +138,7 @@ export async function deleteReport(): Promise<void> {
     await fs.promises.rmdir('files');
 }
 
-export function sendPrComment(token: string): void {
+export async function sendPrComment(token: string): Promise<void> {
     const {
         payload: { pull_request: pullRequest, repository },
     } = github.context;
@@ -150,15 +150,9 @@ export function sendPrComment(token: string): void {
         if (pullRequest) {
             const prNumber = pullRequest.number;
 
-            const abc = new Octokit({
-                authStrategy: createAppAuth,
-                auth: {
-                    appId: 123,
-                    token,
-                },
-            });
+            const octokit = github.getOctokit(token);
 
-            abc.issues.createComment({
+            await octokit.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number: prNumber,

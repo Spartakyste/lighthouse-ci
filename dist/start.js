@@ -57,7 +57,7 @@ function start() {
         yield utils_1.deleteReport();
         core.info('Report removed');
         core.info('Posting comment ...');
-        utils_1.sendPrComment(token);
+        yield utils_1.sendPrComment(token);
         core.info('Comment done');
         if (errors.length > 0) {
             errors.forEach((err) => {

@@ -34,8 +34,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendPrComment = exports.deleteReport = exports.saveReport = exports.buildErrors = exports.getInputs = exports.gatherResults = exports.uploadArtifact = exports.launchLighthouse = void 0;
 const fs_1 = __importDefault(require("fs"));
 const core = __importStar(require("@actions/core"));
-const rest_1 = require("@octokit/rest");
-const auth_app_1 = require("@octokit/auth-app");
 const artifact = __importStar(require("@actions/artifact"));
 const github = __importStar(require("@actions/github"));
 //@ts-ignore
@@ -147,30 +145,26 @@ function deleteReport() {
 }
 exports.deleteReport = deleteReport;
 function sendPrComment(token) {
-    const { payload: { pull_request: pullRequest, repository }, } = github.context;
-    if (repository) {
-        const { full_name: repoFullName } = repository;
-        const [owner, repo] = repoFullName.split('/');
-        if (pullRequest) {
-            const prNumber = pullRequest.number;
-            const abc = new rest_1.Octokit({
-                authStrategy: auth_app_1.createAppAuth,
-                auth: {
-                    appId: 123,
-                    token,
-                },
-            });
-            abc.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body: 'This is a test',
-            });
+    return __awaiter(this, void 0, void 0, function* () {
+        const { payload: { pull_request: pullRequest, repository }, } = github.context;
+        if (repository) {
+            const { full_name: repoFullName } = repository;
+            const [owner, repo] = repoFullName.split('/');
+            if (pullRequest) {
+                const prNumber = pullRequest.number;
+                const octokit = github.getOctokit(token);
+                yield octokit.rest.issues.createComment({
+                    owner,
+                    repo,
+                    issue_number: prNumber,
+                    body: 'This is a test',
+                });
+            }
         }
-    }
-    else {
-        core.error('No pull request was found');
-    }
-    console.log(`pullRequest`, pullRequest);
+        else {
+            core.error('No pull request was found');
+        }
+        console.log(`pullRequest`, pullRequest);
+    });
 }
 exports.sendPrComment = sendPrComment;
