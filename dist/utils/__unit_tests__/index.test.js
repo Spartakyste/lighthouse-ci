@@ -92,3 +92,4 @@ describe('Testing the deleteReport', () => {
         expect(unlynkFileSpy).toHaveBeenCalledWith('./files/lhreport.html');
     }));
 });
+// describe('Testing the sendPrComment', () => {});

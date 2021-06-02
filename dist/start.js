@@ -56,6 +56,9 @@ function start() {
         core.info('Removing the report ...');
         yield utils_1.deleteReport();
         core.info('Report removed');
+        core.info('Posting comment ...');
+        utils_1.sendPrComment();
+        core.info('Comment done');
         if (errors.length > 0) {
             errors.forEach((err) => {
                 core.error(`You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`);

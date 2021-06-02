@@ -8,6 +8,7 @@ import {
     launchLighthouse,
     saveReport,
     uploadArtifact,
+    sendPrComment,
 } from './utils';
 
 export async function start(): Promise<void> {
@@ -48,6 +49,10 @@ export async function start(): Promise<void> {
     core.info('Removing the report ...');
     await deleteReport();
     core.info('Report removed');
+
+    core.info('Posting comment ...');
+    sendPrComment();
+    core.info('Comment done');
 
     if (errors.length > 0) {
         errors.forEach((err) => {

@@ -31,10 +31,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteReport = exports.saveReport = exports.buildErrors = exports.getInputs = exports.gatherResults = exports.uploadArtifact = exports.launchLighthouse = void 0;
+exports.sendPrComment = exports.deleteReport = exports.saveReport = exports.buildErrors = exports.getInputs = exports.gatherResults = exports.uploadArtifact = exports.launchLighthouse = void 0;
 const fs_1 = __importDefault(require("fs"));
 const core = __importStar(require("@actions/core"));
 const artifact = __importStar(require("@actions/artifact"));
+const github = __importStar(require("@actions/github"));
 //@ts-ignore
 const lighthouse_1 = __importDefault(require("lighthouse"));
 /* istanbul ignore next */
@@ -141,3 +142,11 @@ function deleteReport() {
     });
 }
 exports.deleteReport = deleteReport;
+function sendPrComment() {
+    const { payload: { pull_request: pullRequest }, } = github.context;
+    console.log(github.context.payload);
+    if (!pullRequest)
+        core.error('No pull request was found');
+    console.log(`pullRequest`, pullRequest);
+}
+exports.sendPrComment = sendPrComment;

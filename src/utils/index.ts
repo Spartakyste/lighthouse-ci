@@ -1,6 +1,7 @@
 import fs from 'fs';
 import * as core from '@actions/core';
 import * as artifact from '@actions/artifact';
+import * as github from '@actions/github';
 import {
     Inputs,
     LighthouseCategories,
@@ -131,4 +132,16 @@ export async function saveReport(report: string): Promise<void> {
 export async function deleteReport(): Promise<void> {
     fs.unlinkSync('./files/lhreport.html');
     await fs.promises.rmdir('files');
+}
+
+export function sendPrComment(): void {
+    const {
+        payload: { pull_request: pullRequest },
+    } = github.context;
+
+    console.log(github.context.payload);
+
+    if (!pullRequest) core.error('No pull request was found');
+
+    console.log(`pullRequest`, pullRequest);
 }
