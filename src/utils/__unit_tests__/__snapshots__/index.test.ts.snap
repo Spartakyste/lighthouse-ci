@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing the buildErrors Should return an array of errors if thresholds are not met 1`] = `
+Array [
+  Object {
+    "score": 50,
+    "title": "Performance",
+  },
+  Object {
+    "score": 50,
+    "title": "Accessibility",
+  },
+  Object {
+    "score": 50,
+    "title": "SEO",
+  },
+  Object {
+    "score": 50,
+    "title": "Best Practices",
+  },
+  Object {
+    "score": 50,
+    "title": "Progressive Web App",
+  },
+]
+`;
+
+exports[`Testing the gatheringResults Should return a well formatted object with 50 as scores 1`] = `
+Array [
+  Object {
+    "score": 50,
+    "title": "Performance category",
+  },
+  Object {
+    "score": 50,
+    "title": "Accessibility category",
+  },
+  Object {
+    "score": 50,
+    "title": "Best Practices category",
+  },
+  Object {
+    "score": 50,
+    "title": "SEO category",
+  },
+  Object {
+    "score": 50,
+    "title": "Progressive Web App category",
+  },
+]
+`;
+
+exports[`Testing the gatheringResults Should return a well formatted object with 100 as scores 1`] = `
+Array [
+  Object {
+    "score": 100,
+    "title": "Performance category",
+  },
+  Object {
+    "score": 100,
+    "title": "Accessibility category",
+  },
+  Object {
+    "score": 100,
+    "title": "Best Practices category",
+  },
+  Object {
+    "score": 100,
+    "title": "SEO category",
+  },
+  Object {
+    "score": 100,
+    "title": "Progressive Web App category",
+  },
+]
+`;
