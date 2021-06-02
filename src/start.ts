@@ -19,6 +19,7 @@ export async function start(): Promise<void> {
         bestPracticesThreshold,
         PWAThreshold,
         SEOThreshold,
+        token,
     } = getInputs();
 
     const thesholds = {
@@ -51,7 +52,7 @@ export async function start(): Promise<void> {
     core.info('Report removed');
 
     core.info('Posting comment ...');
-    sendPrComment();
+    sendPrComment(token);
     core.info('Comment done');
 
     if (errors.length > 0) {

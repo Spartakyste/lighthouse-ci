@@ -120,6 +120,7 @@ exports.fakeInputs = {
     bestPracticesThreshold: 100,
     PWAThreshold: 100,
     SEOThreshold: 100,
+    token: 'Abc',
 };
 exports.fakeErrors = [
     {

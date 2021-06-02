@@ -5,6 +5,9 @@ inputs:
     description: "The urls to test"
     required: true
     default: ""
+  token:
+    description: "Your PAT or GITHUB_TOKEN to allow the action to publish a comment on your PR"
+    required: true
   performanceThreshold:
     description: "A treshold value for the performance category"
     required: false

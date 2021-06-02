@@ -46,6 +46,7 @@ export interface Error {
 
 export interface Inputs {
     urlsInput: string;
+    token: string;
     performanceThreshold: number;
     accessibilityThreshold: number;
     bestPracticesThreshold: number;

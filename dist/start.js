@@ -34,7 +34,7 @@ const core = __importStar(require("@actions/core"));
 const utils_1 = require("./utils");
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
-        const { urlsInput, performanceThreshold, accessibilityThreshold, bestPracticesThreshold, PWAThreshold, SEOThreshold, } = utils_1.getInputs();
+        const { urlsInput, performanceThreshold, accessibilityThreshold, bestPracticesThreshold, PWAThreshold, SEOThreshold, token, } = utils_1.getInputs();
         const thesholds = {
             Performance: performanceThreshold,
             Accessibility: accessibilityThreshold,
@@ -57,7 +57,7 @@ function start() {
         yield utils_1.deleteReport();
         core.info('Report removed');
         core.info('Posting comment ...');
-        utils_1.sendPrComment();
+        utils_1.sendPrComment(token);
         core.info('Comment done');
         if (errors.length > 0) {
             errors.forEach((err) => {

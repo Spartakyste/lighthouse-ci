@@ -1,5 +1,7 @@
 import fs from 'fs';
 import * as core from '@actions/core';
+import { Octokit } from '@octokit/rest';
+import { createAppAuth } from '@octokit/auth-app';
 import * as artifact from '@actions/artifact';
 import * as github from '@actions/github';
 import {
@@ -94,6 +96,7 @@ export function getInputs(): Inputs {
     );
     const PWAThreshold = Number(core.getInput('PWAThreshold'));
     const SEOThreshold = Number(core.getInput('SEOThreshold'));
+    const token = core.getInput('token');
 
     return {
         urlsInput,
@@ -102,6 +105,7 @@ export function getInputs(): Inputs {
         bestPracticesThreshold,
         PWAThreshold,
         SEOThreshold,
+        token,
     };
 }
 
@@ -134,14 +138,35 @@ export async function deleteReport(): Promise<void> {
     await fs.promises.rmdir('files');
 }
 
-export function sendPrComment(): void {
+export function sendPrComment(token: string): void {
     const {
-        payload: { pull_request: pullRequest },
+        payload: { pull_request: pullRequest, repository },
     } = github.context;
 
-    console.log(github.context.payload);
+    if (repository) {
+        const { full_name: repoFullName } = repository;
+        const [owner, repo] = repoFullName!.split('/');
 
-    if (!pullRequest) core.error('No pull request was found');
+        if (pullRequest) {
+            const prNumber = pullRequest.number;
+
+            const abc = new Octokit({
+                authStrategy: createAppAuth,
+                auth: {
+                    token,
+                },
+            });
+
+            abc.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: 'This is a test',
+            });
+        }
+    } else {
+        core.error('No pull request was found');
+    }
 
     console.log(`pullRequest`, pullRequest);
 }
