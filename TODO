@@ -2,3 +2,4 @@
 - Clean / Split code in the index.ts
 - Add a quiet option that remove all unecessary core.whatever
 - Make it work with multiple urls
+- Check what happen if we give non or few thresholds
