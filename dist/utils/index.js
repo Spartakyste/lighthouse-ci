@@ -143,8 +143,8 @@ function saveReport(report) {
 exports.saveReport = saveReport;
 function deleteReport() {
     return __awaiter(this, void 0, void 0, function* () {
-        fs_1.default.unlinkSync('../files/lhreport.html');
-        yield fs_1.default.promises.rmdir('../files');
+        fs_1.default.unlinkSync('files/lhreport.html');
+        yield fs_1.default.promises.rmdir('files');
     });
 }
 exports.deleteReport = deleteReport;

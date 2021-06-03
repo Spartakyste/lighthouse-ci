@@ -132,8 +132,8 @@ export async function saveReport(report: string): Promise<void> {
 }
 
 export async function deleteReport(): Promise<void> {
-    fs.unlinkSync('../files/lhreport.html');
-    await fs.promises.rmdir('../files');
+    fs.unlinkSync('files/lhreport.html');
+    await fs.promises.rmdir('files');
 }
 
 export function buildCommentText(
