@@ -173,10 +173,13 @@ exports.buildCommentText = buildCommentText;
 function sendPrComment(token, text) {
     return __awaiter(this, void 0, void 0, function* () {
         const { payload: { pull_request: pullRequest, repository }, } = github.context;
+        console.log(`repository`, repository);
         if (repository) {
             const { full_name: repoFullName } = repository;
+            console.log(`repoFullName`, repoFullName);
             if (repoFullName) {
                 const [owner, repo] = repoFullName.split('/');
+                console.log(`pullRequest`, pullRequest);
                 if (pullRequest) {
                     const prNumber = pullRequest.number;
                     const octokit = github.getOctokit(token);
