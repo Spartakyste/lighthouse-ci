@@ -1,5 +1,6 @@
 import { launch } from 'chrome-launcher';
 import * as core from '@actions/core';
+import { Thresholds } from 'interfaces';
 import {
     buildErrors,
     deleteReport,
@@ -23,8 +24,8 @@ export async function start(): Promise<void> {
             SEOThreshold,
             token,
         } = getInputs();
-
-        const thesholds = {
+        console.log('Test');
+        const thesholds: Thresholds = {
             Performance: performanceThreshold,
             Accessibility: accessibilityThreshold,
             SEO: SEOThreshold,
@@ -49,18 +50,25 @@ export async function start(): Promise<void> {
         await uploadArtifact();
         core.info('Upload is over');
 
-        core.info('Removing the report ...');
         await deleteReport();
-        core.info('Report removed');
 
         const hasErrors = errors.length > 0;
 
         core.info('Posting comment ...');
         const commentText = buildCommentText(results, hasErrors);
-        await sendPrComment(token, commentText);
-        core.info('Comment done');
+        const error = await sendPrComment(token, commentText);
+        if (error) {
+            core.info("Comment could't be published");
+        } else {
+            core.info('Comment done');
+        }
 
         if (hasErrors) {
+            errors.forEach((err) => {
+                core.warning(
+                    `Categorie ${err.title} got a score of ${err.score}`
+                );
+            });
             core.setFailed("Thresholds weren't meet, check the artifact");
         }
 

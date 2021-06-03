@@ -121,10 +121,12 @@ function buildErrors(results, thesholds) {
     results.forEach(({ title, score }) => {
         const castedTitle = title;
         const value = thesholds[castedTitle];
-        if (score < value)
-            errors.push({ title, score });
-        else
-            core.info(`You did meet the threshold values you provided for the category ${title} with a score of ${score}`);
+        if (value) {
+            if (score < value)
+                errors.push({ title, score });
+            else
+                core.info(`You did meet the threshold values you provided for the category ${title} with a score of ${score}`);
+        }
     });
     return errors;
 }
@@ -168,6 +170,9 @@ function buildCommentText(results, hasErrors) {
     return text;
 }
 exports.buildCommentText = buildCommentText;
+/**
+ * @returns a boolean saying if an error happaned or not
+ */
 function sendPrComment(token, text) {
     return __awaiter(this, void 0, void 0, function* () {
         const { payload: { pull_request: pullRequest, repository }, } = github.context;
@@ -184,12 +189,16 @@ function sendPrComment(token, text) {
                         issue_number: prNumber,
                         body: text,
                     });
+                    return false;
                 }
+                core.warning('No pull request was found');
+                return true;
             }
+            core.warning('No repository name was found');
+            return true;
         }
-        else {
-            core.error('No pull request was found');
-        }
+        core.warning('No repository was found');
+        return true;
     });
 }
 exports.sendPrComment = sendPrComment;

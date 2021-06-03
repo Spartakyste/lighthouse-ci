@@ -31,16 +31,18 @@ with:
 name: Run Lighthouse
 
 on:
-    pull_request:
-        branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
-    lighthouse-check:
-        - name: Perform Lighthouse check
-          uses: Spartakyste/lighthouse-ci@main
-          with:
-              urls: 'http://example.com/'
-              token: ${{ secrets.GITHUB_TOKEN }}
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Perform Lighthouse check
+        uses: Spartakyste/lighthouse-ci@main
+        with:
+          urls: "http://example.com/"
+          token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### With minimum score enforcement
@@ -49,19 +51,22 @@ jobs:
 name: Run Lighthouse with Minimum Score Enforcement
 
 on:
-    pull_request:
-        branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
-    lighthouse-check:
-        - name: Perform Lighthouse check
-          uses: Spartakyste/lighthouse-ci@main
-          with:
-              urls: 'http://example.com/'
-              token: ${{ secrets.GITHUB_TOKEN }}
-              performanceThreshold: 100
-              accessibilityThreshold: 90
-              bestPracticesThreshold: 25
-              SEOThreshold: 67
-              PWAThreshold: 20
+  lighthouse-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Perform Lighthouse check
+        uses: Spartakyste/lighthouse-ci@main
+        with:
+          urls: "http://example.com/"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          performanceThreshold: 100
+          accessibilityThreshold: 90
+          bestPracticesThreshold: 25
+          SEOThreshold: 67
+          PWAThreshold: 10
+
 ```
