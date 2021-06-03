@@ -71,18 +71,19 @@ function launchLighthouse(chrome, urls) {
 exports.launchLighthouse = launchLighthouse;
 /* istanbul ignore next */
 function uploadArtifact() {
-    try {
-        const resultsPath = `${process.cwd()}/files`;
-        const artifactClient = artifact.create();
-        const fileNames = fs_1.default.readdirSync(resultsPath);
-        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
-        artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true });
-        return undefined;
-    }
-    catch (error) {
-        core.setFailed(error.message);
-        return undefined;
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const resultsPath = `${process.cwd()}/files`;
+            const artifactClient = artifact.create();
+            const fileNames = fs_1.default.readdirSync(resultsPath);
+            const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
+            return yield artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true });
+        }
+        catch (error) {
+            core.setFailed(error.message);
+            return undefined;
+        }
+    });
 }
 exports.uploadArtifact = uploadArtifact;
 function gatherResults(categories) {
@@ -138,8 +139,8 @@ function saveReport(report) {
 exports.saveReport = saveReport;
 function deleteReport() {
     return __awaiter(this, void 0, void 0, function* () {
-        fs_1.default.unlinkSync('./files/lhreport.html');
-        yield fs_1.default.promises.rmdir('files');
+        fs_1.default.unlinkSync('../files/lhreport.html');
+        yield fs_1.default.promises.rmdir('../files');
     });
 }
 exports.deleteReport = deleteReport;

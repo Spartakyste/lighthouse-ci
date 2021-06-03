@@ -52,20 +52,19 @@ export async function launchLighthouse(
 }
 
 /* istanbul ignore next */
-export function uploadArtifact(): Promise<void> | void {
+export async function uploadArtifact(): Promise<artifact.UploadResponse | void> {
     try {
         const resultsPath = `${process.cwd()}/files`;
 
         const artifactClient = artifact.create();
         const fileNames = fs.readdirSync(resultsPath);
         const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
-        artifactClient.uploadArtifact(
+        return await artifactClient.uploadArtifact(
             'Lighthouse-results',
             files,
             resultsPath,
             { continueOnError: true }
         );
-        return undefined;
     } catch (error) {
         core.setFailed(error.message);
         return undefined;
@@ -130,8 +129,8 @@ export async function saveReport(report: string): Promise<void> {
 }
 
 export async function deleteReport(): Promise<void> {
-    fs.unlinkSync('./files/lhreport.html');
-    await fs.promises.rmdir('files');
+    fs.unlinkSync('../files/lhreport.html');
+    await fs.promises.rmdir('../files');
 }
 
 export function buildCommentText(
