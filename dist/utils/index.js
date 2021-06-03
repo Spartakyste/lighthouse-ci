@@ -173,16 +173,18 @@ function sendPrComment(token, text) {
         const { payload: { pull_request: pullRequest, repository }, } = github.context;
         if (repository) {
             const { full_name: repoFullName } = repository;
-            const [owner, repo] = repoFullName.split('/');
-            if (pullRequest) {
-                const prNumber = pullRequest.number;
-                const octokit = github.getOctokit(token);
-                yield octokit.rest.issues.createComment({
-                    owner,
-                    repo,
-                    issue_number: prNumber,
-                    body: text,
-                });
+            if (repoFullName) {
+                const [owner, repo] = repoFullName.split('/');
+                if (pullRequest) {
+                    const prNumber = pullRequest.number;
+                    const octokit = github.getOctokit(token);
+                    yield octokit.rest.issues.createComment({
+                        owner,
+                        repo,
+                        issue_number: prNumber,
+                        body: text,
+                    });
+                }
             }
         }
         else {

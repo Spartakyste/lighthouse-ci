@@ -89,7 +89,7 @@ describe('Testing the deleteReport', () => {
         expect(rmdirSpy).toHaveBeenCalledTimes(1);
         expect(rmdirSpy).toHaveBeenCalledWith('files');
         expect(unlynkFileSpy).toHaveBeenCalledTimes(1);
-        expect(unlynkFileSpy).toHaveBeenCalledWith('./files/lhreport.html');
+        expect(unlynkFileSpy).toHaveBeenCalledWith('files/lhreport.html');
     }));
 });
 describe('Testing the buildCommentText', () => {

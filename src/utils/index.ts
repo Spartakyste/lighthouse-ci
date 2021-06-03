@@ -1,7 +1,5 @@
 import fs from 'fs';
 import * as core from '@actions/core';
-import { Octokit } from '@octokit/rest';
-import { createAppAuth } from '@octokit/auth-app';
 import * as artifact from '@actions/artifact';
 import * as github from '@actions/github';
 import {
@@ -171,19 +169,21 @@ export async function sendPrComment(
 
     if (repository) {
         const { full_name: repoFullName } = repository;
-        const [owner, repo] = repoFullName!.split('/');
+        if (repoFullName) {
+            const [owner, repo] = repoFullName.split('/');
 
-        if (pullRequest) {
-            const prNumber = pullRequest.number;
+            if (pullRequest) {
+                const prNumber = pullRequest.number;
 
-            const octokit = github.getOctokit(token);
+                const octokit = github.getOctokit(token);
 
-            await octokit.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body: text,
-            });
+                await octokit.rest.issues.createComment({
+                    owner,
+                    repo,
+                    issue_number: prNumber,
+                    body: text,
+                });
+            }
         }
     } else {
         core.error('No pull request was found');
