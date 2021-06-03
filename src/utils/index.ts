@@ -168,9 +168,10 @@ export async function sendPrComment(
     const {
         payload: { pull_request: pullRequest, repository },
     } = github.context;
-
+console.log(`repository`, repository)
     if (repository) {
         const { full_name: repoFullName } = repository;
+        console.log(`repoFullName`, repoFullName)
         if (repoFullName) {
             const [owner, repo] = repoFullName.split('/');
 console.log(`pullRequest`, pullRequest)
