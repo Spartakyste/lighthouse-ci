@@ -36,7 +36,7 @@ function start() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { urlsInput, performanceThreshold, accessibilityThreshold, bestPracticesThreshold, PWAThreshold, SEOThreshold, token, } = utils_1.getInputs();
-            console.log("Test");
+            console.log('Test');
             const thesholds = {
                 Performance: performanceThreshold,
                 Accessibility: accessibilityThreshold,
@@ -58,13 +58,15 @@ function start() {
             core.info('Removing the report ...');
             yield utils_1.deleteReport();
             core.info('Report removed');
-            console.log(`errors`, errors);
             const hasErrors = errors.length > 0;
             core.info('Posting comment ...');
             const commentText = utils_1.buildCommentText(results, hasErrors);
             yield utils_1.sendPrComment(token, commentText);
             core.info('Comment done');
             if (hasErrors) {
+                errors.forEach((err) => {
+                    core.warning(`Categorie ${err.title} got a score of ${err.score}`);
+                });
                 core.setFailed("Thresholds weren't meet, check the artifact");
             }
             yield chrome.kill();

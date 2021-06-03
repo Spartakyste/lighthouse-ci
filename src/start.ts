@@ -24,7 +24,7 @@ export async function start(): Promise<void> {
             SEOThreshold,
             token,
         } = getInputs();
-console.log("Test")
+        console.log('Test');
         const thesholds: Thresholds = {
             Performance: performanceThreshold,
             Accessibility: accessibilityThreshold,
@@ -53,7 +53,7 @@ console.log("Test")
         core.info('Removing the report ...');
         await deleteReport();
         core.info('Report removed');
-console.log(`errors`, errors)
+
         const hasErrors = errors.length > 0;
 
         core.info('Posting comment ...');
@@ -62,6 +62,11 @@ console.log(`errors`, errors)
         core.info('Comment done');
 
         if (hasErrors) {
+            errors.forEach((err) => {
+                core.warning(
+                    `Categorie ${err.title} got a score of ${err.score}`
+                );
+            });
             core.setFailed("Thresholds weren't meet, check the artifact");
         }
 

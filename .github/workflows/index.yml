@@ -19,4 +19,4 @@ jobs:
           accessibilityThreshold: 90
           bestPracticesThreshold: 25
           SEOThreshold: 67
-          PWAThreshold: 20
+          PWAThreshold: 10
