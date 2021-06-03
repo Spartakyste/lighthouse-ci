@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Perform Lighthouse check
-        uses: Spartakyste/lighthouse-ci@fix/optionnalTresholds
+        uses: Spartakyste/lighthouse-ci@fix/optionnalThresholds
         with:
           urls: "http://example.com/"
           token: ${{ secrets.GITHUB_TOKEN }}
