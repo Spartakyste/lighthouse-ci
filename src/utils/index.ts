@@ -173,7 +173,7 @@ export async function sendPrComment(
         const { full_name: repoFullName } = repository;
         if (repoFullName) {
             const [owner, repo] = repoFullName.split('/');
-
+console.log(`pullRequest`, pullRequest)
             if (pullRequest) {
                 const prNumber = pullRequest.number;
 

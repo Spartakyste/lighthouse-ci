@@ -177,6 +177,7 @@ function sendPrComment(token, text) {
             const { full_name: repoFullName } = repository;
             if (repoFullName) {
                 const [owner, repo] = repoFullName.split('/');
+                console.log(`pullRequest`, pullRequest);
                 if (pullRequest) {
                     const prNumber = pullRequest.number;
                     const octokit = github.getOctokit(token);
