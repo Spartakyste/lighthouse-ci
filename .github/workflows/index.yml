@@ -2,7 +2,7 @@ name: Run Lighthouse with Minimum Score Enforcement
 
 on:
   push:
-    branches: [master]
+    branches: [fix/optionnalThresholds]
   pull_request:
     branches: [master]
 
