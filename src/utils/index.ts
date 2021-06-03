@@ -168,13 +168,13 @@ export async function sendPrComment(
     const {
         payload: { pull_request: pullRequest, repository },
     } = github.context;
-console.log(`repository`, repository)
+console.log(`github.context`, github.context.payload)
     if (repository) {
         const { full_name: repoFullName } = repository;
-        console.log(`repoFullName`, repoFullName)
+
         if (repoFullName) {
             const [owner, repo] = repoFullName.split('/');
-console.log(`pullRequest`, pullRequest)
+
             if (pullRequest) {
                 const prNumber = pullRequest.number;
 
@@ -186,9 +186,11 @@ console.log(`pullRequest`, pullRequest)
                     issue_number: prNumber,
                     body: text,
                 });
+            } else {
+                core.error('No pull request was found');
             }
         }
     } else {
-        core.error('No pull request was found');
+        core.error('No repository was found');
     }
 }
