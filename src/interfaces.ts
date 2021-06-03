@@ -27,11 +27,11 @@ export interface LighthouseCategories {
 }
 
 export interface Thresholds {
-    Performance: number;
-    Accessibility: number;
-    SEO: number;
-    'Best Practices': number;
-    'Progressive Web App': number;
+    Performance: number | undefined;
+    Accessibility: number | undefined;
+    SEO: number | undefined;
+    'Best Practices': number | undefined;
+    'Progressive Web App': number | undefined;
 }
 
 export interface Result {
@@ -47,9 +47,9 @@ export interface Error {
 export interface Inputs {
     urlsInput: string;
     token: string;
-    performanceThreshold: number;
-    accessibilityThreshold: number;
-    bestPracticesThreshold: number;
-    PWAThreshold: number;
-    SEOThreshold: number;
+    performanceThreshold: number | undefined;
+    accessibilityThreshold: number | undefined;
+    bestPracticesThreshold: number | undefined;
+    PWAThreshold: number | undefined;
+    SEOThreshold: number | undefined;
 }

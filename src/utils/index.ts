@@ -111,11 +111,13 @@ export function buildErrors(results: Result[], thesholds: Thresholds): Error[] {
         const castedTitle = title as keyof typeof thesholds;
         const value = thesholds[castedTitle];
 
-        if (score < value) errors.push({ title, score });
-        else
-            core.info(
-                `You did meet the threshold values you provided for the category ${title} with a score of ${score}`
-            );
+        if (value) {
+            if (score < value) errors.push({ title, score });
+            else
+                core.info(
+                    `You did meet the threshold values you provided for the category ${title} with a score of ${score}`
+                );
+        }
     });
     return errors;
 }

@@ -1,5 +1,6 @@
 import { launch } from 'chrome-launcher';
 import * as core from '@actions/core';
+import { Thresholds } from 'interfaces';
 import {
     buildErrors,
     deleteReport,
@@ -24,7 +25,7 @@ export async function start(): Promise<void> {
             token,
         } = getInputs();
 
-        const thesholds = {
+        const thesholds: Thresholds = {
             Performance: performanceThreshold,
             Accessibility: accessibilityThreshold,
             SEO: SEOThreshold,
