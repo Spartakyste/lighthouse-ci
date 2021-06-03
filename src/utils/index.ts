@@ -168,7 +168,7 @@ export async function sendPrComment(
     const {
         payload: { pull_request: pullRequest, repository },
     } = github.context;
-console.log(`github.context`, github.context.payload)
+
     if (repository) {
         const { full_name: repoFullName } = repository;
 
@@ -187,10 +187,10 @@ console.log(`github.context`, github.context.payload)
                     body: text,
                 });
             } else {
-                core.error('No pull request was found');
+                core.warning('No pull request was found');
             }
         }
     } else {
-        core.error('No repository was found');
+        core.warning('No repository was found');
     }
 }

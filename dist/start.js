@@ -58,6 +58,7 @@ function start() {
             core.info('Removing the report ...');
             yield utils_1.deleteReport();
             core.info('Report removed');
+            console.log(`errors`, errors);
             const hasErrors = errors.length > 0;
             core.info('Posting comment ...');
             const commentText = utils_1.buildCommentText(results, hasErrors);
