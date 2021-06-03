@@ -15,7 +15,7 @@ jobs:
         with:
           urls: "http://example.com/"
           token: ${{ secrets.GITHUB_TOKEN }}
-          performanceThreshold: 100
+          #performanceThreshold: 100
           accessibilityThreshold: 90
           bestPracticesThreshold: 25
           SEOThreshold: 67
