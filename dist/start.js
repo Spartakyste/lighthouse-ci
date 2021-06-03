@@ -34,36 +34,43 @@ const core = __importStar(require("@actions/core"));
 const utils_1 = require("./utils");
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
-        const { urlsInput, performanceThreshold, accessibilityThreshold, bestPracticesThreshold, PWAThreshold, SEOThreshold, } = utils_1.getInputs();
-        const thesholds = {
-            Performance: performanceThreshold,
-            Accessibility: accessibilityThreshold,
-            SEO: SEOThreshold,
-            'Best Practices': bestPracticesThreshold,
-            'Progressive Web App': PWAThreshold,
-        };
-        const chrome = yield chrome_launcher_1.launch({
-            chromeFlags: ['--headless'],
-        });
-        const runnerResult = yield utils_1.launchLighthouse(chrome, urlsInput);
-        const { report } = runnerResult;
-        const results = utils_1.gatherResults(runnerResult.lhr.categories);
-        yield utils_1.saveReport(report);
-        const errors = utils_1.buildErrors(results, thesholds);
-        core.info('Uploading artifact ...');
-        yield utils_1.uploadArtifact();
-        core.info('Upload is over');
-        core.info('Removing the report ...');
-        yield utils_1.deleteReport();
-        core.info('Report removed');
-        if (errors.length > 0) {
-            errors.forEach((err) => {
-                core.error(`You didn't meet the thresholds values you provided for the category ${err.title} with a score of ${err.score}`);
+        try {
+            const { urlsInput, performanceThreshold, accessibilityThreshold, bestPracticesThreshold, PWAThreshold, SEOThreshold, token, } = utils_1.getInputs();
+            const thesholds = {
+                Performance: performanceThreshold,
+                Accessibility: accessibilityThreshold,
+                SEO: SEOThreshold,
+                'Best Practices': bestPracticesThreshold,
+                'Progressive Web App': PWAThreshold,
+            };
+            const chrome = yield chrome_launcher_1.launch({
+                chromeFlags: ['--headless'],
             });
-            core.setFailed("Thresholds weren't meet, check the artifact");
+            const runnerResult = yield utils_1.launchLighthouse(chrome, urlsInput);
+            const { report } = runnerResult;
+            const results = utils_1.gatherResults(runnerResult.lhr.categories);
+            yield utils_1.saveReport(report);
+            const errors = utils_1.buildErrors(results, thesholds);
+            core.info('Uploading artifact ...');
+            yield utils_1.uploadArtifact();
+            core.info('Upload is over');
+            core.info('Removing the report ...');
+            yield utils_1.deleteReport();
+            core.info('Report removed');
+            const hasErrors = errors.length > 0;
+            core.info('Posting comment ...');
+            const commentText = utils_1.buildCommentText(results, hasErrors);
+            yield utils_1.sendPrComment(token, commentText);
+            core.info('Comment done');
+            if (hasErrors) {
+                core.setFailed("Thresholds weren't meet, check the artifact");
+            }
+            yield chrome.kill();
+            return undefined;
         }
-        yield chrome.kill();
-        return undefined;
+        catch (error) {
+            throw new Error(error);
+        }
     });
 }
 exports.start = start;

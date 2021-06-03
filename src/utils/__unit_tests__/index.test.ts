@@ -7,6 +7,7 @@ import {
     lighthouseResults50,
 } from 'mocks';
 import {
+    buildCommentText,
     buildErrors,
     deleteReport,
     gatherResults,
@@ -127,5 +128,17 @@ describe('Testing the deleteReport', () => {
 
         expect(unlynkFileSpy).toHaveBeenCalledTimes(1);
         expect(unlynkFileSpy).toHaveBeenCalledWith('./files/lhreport.html');
+    });
+});
+
+describe('Testing the buildCommentText', () => {
+    test('Should return a text with the results', () => {
+        const results = buildCommentText(fakeResults100, true);
+        expect(results).toMatchSnapshot();
+    });
+
+    test('Should return a text with the results', () => {
+        const results = buildCommentText(fakeResults100, false);
+        expect(results).toMatchSnapshot();
     });
 });

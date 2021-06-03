@@ -31,10 +31,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteReport = exports.saveReport = exports.buildErrors = exports.getInputs = exports.gatherResults = exports.uploadArtifact = exports.launchLighthouse = void 0;
+exports.sendPrComment = exports.buildCommentText = exports.deleteReport = exports.saveReport = exports.buildErrors = exports.getInputs = exports.gatherResults = exports.uploadArtifact = exports.launchLighthouse = void 0;
 const fs_1 = __importDefault(require("fs"));
 const core = __importStar(require("@actions/core"));
 const artifact = __importStar(require("@actions/artifact"));
+const github = __importStar(require("@actions/github"));
 //@ts-ignore
 const lighthouse_1 = __importDefault(require("lighthouse"));
 /* istanbul ignore next */
@@ -70,18 +71,18 @@ function launchLighthouse(chrome, urls) {
 exports.launchLighthouse = launchLighthouse;
 /* istanbul ignore next */
 function uploadArtifact() {
-    try {
-        const resultsPath = `${process.cwd()}/files`;
-        const artifactClient = artifact.create();
-        const fileNames = fs_1.default.readdirSync(resultsPath);
-        const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
-        artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true });
-        return undefined;
-    }
-    catch (error) {
-        core.setFailed(error.message);
-        return undefined;
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const resultsPath = `${process.cwd()}/files`;
+            const artifactClient = artifact.create();
+            const fileNames = fs_1.default.readdirSync(resultsPath);
+            const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
+            return artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true });
+        }
+        catch (error) {
+            throw new ErrorEvent(error.message);
+        }
+    });
 }
 exports.uploadArtifact = uploadArtifact;
 function gatherResults(categories) {
@@ -103,6 +104,7 @@ function getInputs() {
     const bestPracticesThreshold = Number(core.getInput('bestPracticesThreshold'));
     const PWAThreshold = Number(core.getInput('PWAThreshold'));
     const SEOThreshold = Number(core.getInput('SEOThreshold'));
+    const token = core.getInput('token');
     return {
         urlsInput,
         performanceThreshold,
@@ -110,6 +112,7 @@ function getInputs() {
         bestPracticesThreshold,
         PWAThreshold,
         SEOThreshold,
+        token,
     };
 }
 exports.getInputs = getInputs;
@@ -118,7 +121,6 @@ function buildErrors(results, thesholds) {
     results.forEach(({ title, score }) => {
         const castedTitle = title;
         const value = thesholds[castedTitle];
-        core.info(`You enforced a minimum value of ${value} for the category ${castedTitle}`);
         if (score < value)
             errors.push({ title, score });
         else
@@ -129,15 +131,63 @@ function buildErrors(results, thesholds) {
 exports.buildErrors = buildErrors;
 function saveReport(report) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield fs_1.default.promises.mkdir('files');
-        fs_1.default.writeFileSync('files/lhreport.html', report);
+        try {
+            yield fs_1.default.promises.mkdir('files');
+            fs_1.default.writeFileSync('files/lhreport.html', report);
+        }
+        catch (error) {
+            throw new Error(error);
+        }
     });
 }
 exports.saveReport = saveReport;
 function deleteReport() {
     return __awaiter(this, void 0, void 0, function* () {
-        fs_1.default.unlinkSync('./files/lhreport.html');
+        fs_1.default.unlinkSync('files/lhreport.html');
         yield fs_1.default.promises.rmdir('files');
     });
 }
 exports.deleteReport = deleteReport;
+function buildCommentText(results, hasErrors) {
+    let text = '';
+    if (hasErrors) {
+        text += 'The action failed. ';
+    }
+    else {
+        text += 'The action succeed. ';
+    }
+    text += 'Here are your Lighthouse scores :';
+    results.forEach((result, index) => {
+        if (index === 0) {
+            text += `\n\t- ${result.title}, with a score of ${result.score}.\n`;
+        }
+        else {
+            text += `\t- ${result.title}, with a score of ${result.score}.\n`;
+        }
+    });
+    return text;
+}
+exports.buildCommentText = buildCommentText;
+function sendPrComment(token, text) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { payload: { pull_request: pullRequest, repository }, } = github.context;
+        if (repository) {
+            const { full_name: repoFullName } = repository;
+            const [owner, repo] = repoFullName.split('/');
+            if (pullRequest) {
+                const prNumber = pullRequest.number;
+                const octokit = github.getOctokit(token);
+                yield octokit.rest.issues.createComment({
+                    owner,
+                    repo,
+                    issue_number: prNumber,
+                    body: text,
+                });
+            }
+        }
+        else {
+            core.error('No pull request was found');
+        }
+    });
+}
+exports.sendPrComment = sendPrComment;

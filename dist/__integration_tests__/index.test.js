@@ -29,7 +29,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils = __importStar(require("utils"));
-const core = __importStar(require("@actions/core"));
 const mocks_1 = require("mocks");
 const start_1 = require("start");
 describe('Testing the start function', () => {
@@ -71,22 +70,5 @@ describe('Testing the start function', () => {
         expect(artifactSpy).toHaveBeenCalledTimes(1);
         expect(saveReportSpy).toHaveBeenCalledTimes(1);
         expect(deleteReportSpy).toHaveBeenCalledTimes(1);
-    }));
-    test('Launch everything but with errors, should log them', () => __awaiter(void 0, void 0, void 0, function* () {
-        jest.spyOn(utils, 'getInputs').mockImplementationOnce(() => mocks_1.fakeInputs);
-        jest.spyOn(utils, 'launchLighthouse').mockResolvedValueOnce({
-            report: '',
-            lhr: {
-                categories: mocks_1.lighthouseResults100,
-            },
-        });
-        jest.spyOn(utils, 'gatherResults').mockImplementationOnce(() => mocks_1.fakeResults100);
-        jest.spyOn(utils, 'buildErrors').mockImplementationOnce(() => mocks_1.fakeErrors);
-        jest.spyOn(utils, 'saveReport').mockResolvedValueOnce(undefined);
-        jest.spyOn(utils, 'deleteReport').mockResolvedValueOnce(undefined);
-        jest.spyOn(utils, 'uploadArtifact').mockResolvedValueOnce(undefined);
-        const coreSpy = jest.spyOn(core, 'error');
-        yield start_1.start();
-        expect(coreSpy).toHaveBeenCalledTimes(mocks_1.fakeErrors.length);
     }));
 });

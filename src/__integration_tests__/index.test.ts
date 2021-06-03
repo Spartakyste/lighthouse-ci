@@ -7,6 +7,7 @@ import {
     lighthouseResults100,
 } from 'mocks';
 import { start } from 'start';
+import { UploadResponse } from '@actions/artifact';
 
 describe('Testing the start function', () => {
     beforeEach(() => {
@@ -44,7 +45,7 @@ describe('Testing the start function', () => {
 
         const artifactSpy = jest
             .spyOn(utils, 'uploadArtifact')
-            .mockResolvedValueOnce(undefined);
+            .mockResolvedValueOnce(undefined as unknown as UploadResponse);
 
         await start();
 
@@ -60,35 +61,5 @@ describe('Testing the start function', () => {
 
         expect(saveReportSpy).toHaveBeenCalledTimes(1);
         expect(deleteReportSpy).toHaveBeenCalledTimes(1);
-    });
-
-    test('Launch everything but with errors, should log them', async () => {
-        jest.spyOn(utils, 'getInputs').mockImplementationOnce(() => fakeInputs);
-
-        jest.spyOn(utils, 'launchLighthouse').mockResolvedValueOnce({
-            report: '',
-            lhr: {
-                categories: lighthouseResults100,
-            },
-        });
-
-        jest.spyOn(utils, 'gatherResults').mockImplementationOnce(
-            () => fakeResults100
-        );
-
-        jest.spyOn(utils, 'buildErrors').mockImplementationOnce(
-            () => fakeErrors
-        );
-
-        jest.spyOn(utils, 'saveReport').mockResolvedValueOnce(undefined);
-        jest.spyOn(utils, 'deleteReport').mockResolvedValueOnce(undefined);
-
-        jest.spyOn(utils, 'uploadArtifact').mockResolvedValueOnce(undefined);
-
-        const coreSpy = jest.spyOn(core, 'error');
-
-        await start();
-
-        expect(coreSpy).toHaveBeenCalledTimes(fakeErrors.length);
     });
 });

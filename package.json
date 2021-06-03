@@ -32,6 +32,8 @@
     "dependencies": {
         "@actions/artifact": "^0.5.1",
         "@actions/core": "^1.3.0",
-        "@actions/github": "^5.0.0"
+        "@actions/github": "^5.0.0",
+        "@octokit/auth-app": "^3.4.1",
+        "@octokit/rest": "^18.5.6"
     }
 }

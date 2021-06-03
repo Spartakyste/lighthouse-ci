@@ -1,5 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Testing the buildCommentText Should return a text with the results 1`] = `
+"The action failed. Here are your Lighthouse scores :
+	- Performance, with a score of 100.
+	- Accessibility, with a score of 100.
+	- SEO, with a score of 100.
+	- Best Practices, with a score of 100.
+	- Progressive Web App, with a score of 100.
+"
+`;
+
+exports[`Testing the buildCommentText Should return a text with the results 2`] = `
+"The action succeed. Here are your Lighthouse scores :
+	- Performance, with a score of 100.
+	- Accessibility, with a score of 100.
+	- SEO, with a score of 100.
+	- Best Practices, with a score of 100.
+	- Progressive Web App, with a score of 100.
+"
+`;
+
 exports[`Testing the buildErrors Should return an array of errors if thresholds are not met 1`] = `
 Array [
   Object {

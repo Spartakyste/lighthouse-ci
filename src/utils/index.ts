@@ -1,6 +1,9 @@
 import fs from 'fs';
 import * as core from '@actions/core';
+import { Octokit } from '@octokit/rest';
+import { createAppAuth } from '@octokit/auth-app';
 import * as artifact from '@actions/artifact';
+import * as github from '@actions/github';
 import {
     Inputs,
     LighthouseCategories,
@@ -49,23 +52,21 @@ export async function launchLighthouse(
 }
 
 /* istanbul ignore next */
-export function uploadArtifact(): Promise<void> | void {
+export async function uploadArtifact(): Promise<artifact.UploadResponse> {
     try {
         const resultsPath = `${process.cwd()}/files`;
 
         const artifactClient = artifact.create();
         const fileNames = fs.readdirSync(resultsPath);
         const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
-        artifactClient.uploadArtifact(
+        return artifactClient.uploadArtifact(
             'Lighthouse-results',
             files,
             resultsPath,
             { continueOnError: true }
         );
-        return undefined;
     } catch (error) {
-        core.setFailed(error.message);
-        return undefined;
+        throw new ErrorEvent(error.message);
     }
 }
 
@@ -93,6 +94,7 @@ export function getInputs(): Inputs {
     );
     const PWAThreshold = Number(core.getInput('PWAThreshold'));
     const SEOThreshold = Number(core.getInput('SEOThreshold'));
+    const token = core.getInput('token');
 
     return {
         urlsInput,
@@ -101,6 +103,7 @@ export function getInputs(): Inputs {
         bestPracticesThreshold,
         PWAThreshold,
         SEOThreshold,
+        token,
     };
 }
 
@@ -109,10 +112,6 @@ export function buildErrors(results: Result[], thesholds: Thresholds): Error[] {
     results.forEach(({ title, score }) => {
         const castedTitle = title as keyof typeof thesholds;
         const value = thesholds[castedTitle];
-
-        core.info(
-            `You enforced a minimum value of ${value} for the category ${castedTitle}`
-        );
 
         if (score < value) errors.push({ title, score });
         else
@@ -124,11 +123,69 @@ export function buildErrors(results: Result[], thesholds: Thresholds): Error[] {
 }
 
 export async function saveReport(report: string): Promise<void> {
-    await fs.promises.mkdir('files');
-    fs.writeFileSync('files/lhreport.html', report);
+    try {
+        await fs.promises.mkdir('files');
+        fs.writeFileSync('files/lhreport.html', report);
+    } catch (error) {
+        throw new Error(error);
+    }
 }
 
 export async function deleteReport(): Promise<void> {
-    fs.unlinkSync('./files/lhreport.html');
+    fs.unlinkSync('files/lhreport.html');
     await fs.promises.rmdir('files');
+}
+
+export function buildCommentText(
+    results: Result[],
+    hasErrors: boolean
+): string {
+    let text = '';
+
+    if (hasErrors) {
+        text += 'The action failed. ';
+    } else {
+        text += 'The action succeed. ';
+    }
+
+    text += 'Here are your Lighthouse scores :';
+
+    results.forEach((result, index) => {
+        if (index === 0) {
+            text += `\n\t- ${result.title}, with a score of ${result.score}.\n`;
+        } else {
+            text += `\t- ${result.title}, with a score of ${result.score}.\n`;
+        }
+    });
+
+    return text;
+}
+
+export async function sendPrComment(
+    token: string,
+    text: string
+): Promise<void> {
+    const {
+        payload: { pull_request: pullRequest, repository },
+    } = github.context;
+
+    if (repository) {
+        const { full_name: repoFullName } = repository;
+        const [owner, repo] = repoFullName!.split('/');
+
+        if (pullRequest) {
+            const prNumber = pullRequest.number;
+
+            const octokit = github.getOctokit(token);
+
+            await octokit.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: text,
+            });
+        }
+    } else {
+        core.error('No pull request was found');
+    }
 }
