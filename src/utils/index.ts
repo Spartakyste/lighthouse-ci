@@ -161,10 +161,14 @@ export function buildCommentText(
     return text;
 }
 
+
+/**
+ * @returns a boolean saying if an error happaned or not
+ */
 export async function sendPrComment(
     token: string,
     text: string
-): Promise<void> {
+): Promise<boolean | void> {
     const {
         payload: { pull_request: pullRequest, repository },
     } = github.context;
@@ -186,11 +190,14 @@ export async function sendPrComment(
                     issue_number: prNumber,
                     body: text,
                 });
-            } else {
-                core.warning('No pull request was found');
+                return false;
             }
+            core.warning('No pull request was found');
+            return true;
         }
-    } else {
-        core.warning('No repository was found');
+        core.warning('No repository name was found');
+        return true;
     }
+    core.warning('No repository was found');
+    return true;
 }

@@ -170,6 +170,9 @@ function buildCommentText(results, hasErrors) {
     return text;
 }
 exports.buildCommentText = buildCommentText;
+/**
+ * @returns a boolean saying if an error happaned or not
+ */
 function sendPrComment(token, text) {
     return __awaiter(this, void 0, void 0, function* () {
         const { payload: { pull_request: pullRequest, repository }, } = github.context;
@@ -186,15 +189,16 @@ function sendPrComment(token, text) {
                         issue_number: prNumber,
                         body: text,
                     });
+                    return false;
                 }
-                else {
-                    core.warning('No pull request was found');
-                }
+                core.warning('No pull request was found');
+                return true;
             }
+            core.warning('No repository name was found');
+            return true;
         }
-        else {
-            core.warning('No repository was found');
-        }
+        core.warning('No repository was found');
+        return true;
     });
 }
 exports.sendPrComment = sendPrComment;
