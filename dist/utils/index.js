@@ -77,11 +77,10 @@ function uploadArtifact() {
             const artifactClient = artifact.create();
             const fileNames = fs_1.default.readdirSync(resultsPath);
             const files = fileNames.map((fileName) => `${resultsPath}/${fileName}`);
-            return yield artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true });
+            return artifactClient.uploadArtifact('Lighthouse-results', files, resultsPath, { continueOnError: true });
         }
         catch (error) {
-            core.setFailed(error.message);
-            return undefined;
+            throw new ErrorEvent(error.message);
         }
     });
 }
@@ -132,8 +131,13 @@ function buildErrors(results, thesholds) {
 exports.buildErrors = buildErrors;
 function saveReport(report) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield fs_1.default.promises.mkdir('files');
-        fs_1.default.writeFileSync('files/lhreport.html', report);
+        try {
+            yield fs_1.default.promises.mkdir('files');
+            fs_1.default.writeFileSync('files/lhreport.html', report);
+        }
+        catch (error) {
+            throw new Error(error);
+        }
     });
 }
 exports.saveReport = saveReport;

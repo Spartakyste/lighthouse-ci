@@ -7,6 +7,7 @@ import {
     lighthouseResults100,
 } from 'mocks';
 import { start } from 'start';
+import { UploadResponse } from '@actions/artifact';
 
 describe('Testing the start function', () => {
     beforeEach(() => {
@@ -44,7 +45,7 @@ describe('Testing the start function', () => {
 
         const artifactSpy = jest
             .spyOn(utils, 'uploadArtifact')
-            .mockResolvedValueOnce(undefined);
+            .mockResolvedValueOnce(undefined as unknown as UploadResponse);
 
         await start();
 

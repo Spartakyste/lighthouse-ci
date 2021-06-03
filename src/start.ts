@@ -13,57 +13,61 @@ import {
 } from './utils';
 
 export async function start(): Promise<void> {
-    const {
-        urlsInput,
-        performanceThreshold,
-        accessibilityThreshold,
-        bestPracticesThreshold,
-        PWAThreshold,
-        SEOThreshold,
-        token,
-    } = getInputs();
+    try {
+        const {
+            urlsInput,
+            performanceThreshold,
+            accessibilityThreshold,
+            bestPracticesThreshold,
+            PWAThreshold,
+            SEOThreshold,
+            token,
+        } = getInputs();
 
-    const thesholds = {
-        Performance: performanceThreshold,
-        Accessibility: accessibilityThreshold,
-        SEO: SEOThreshold,
-        'Best Practices': bestPracticesThreshold,
-        'Progressive Web App': PWAThreshold,
-    };
+        const thesholds = {
+            Performance: performanceThreshold,
+            Accessibility: accessibilityThreshold,
+            SEO: SEOThreshold,
+            'Best Practices': bestPracticesThreshold,
+            'Progressive Web App': PWAThreshold,
+        };
 
-    const chrome = await launch({
-        chromeFlags: ['--headless'],
-    });
+        const chrome = await launch({
+            chromeFlags: ['--headless'],
+        });
 
-    const runnerResult = await launchLighthouse(chrome, urlsInput);
-    const { report } = runnerResult;
+        const runnerResult = await launchLighthouse(chrome, urlsInput);
+        const { report } = runnerResult;
 
-    const results = gatherResults(runnerResult.lhr.categories);
+        const results = gatherResults(runnerResult.lhr.categories);
 
-    await saveReport(report);
+        await saveReport(report);
 
-    const errors = buildErrors(results, thesholds);
+        const errors = buildErrors(results, thesholds);
 
-    core.info('Uploading artifact ...');
-    await uploadArtifact();
-    core.info('Upload is over');
+        core.info('Uploading artifact ...');
+        await uploadArtifact();
+        core.info('Upload is over');
 
-    core.info('Removing the report ...');
-    await deleteReport();
-    core.info('Report removed');
+        core.info('Removing the report ...');
+        await deleteReport();
+        core.info('Report removed');
 
-    const hasErrors = errors.length > 0;
+        const hasErrors = errors.length > 0;
 
-    core.info('Posting comment ...');
-    const commentText = buildCommentText(results, hasErrors);
-    await sendPrComment(token, commentText);
-    core.info('Comment done');
+        core.info('Posting comment ...');
+        const commentText = buildCommentText(results, hasErrors);
+        await sendPrComment(token, commentText);
+        core.info('Comment done');
 
-    if (hasErrors) {
-        core.setFailed("Thresholds weren't meet, check the artifact");
+        if (hasErrors) {
+            core.setFailed("Thresholds weren't meet, check the artifact");
+        }
+
+        await chrome.kill();
+
+        return undefined;
+    } catch (error) {
+        throw new Error(error);
     }
-
-    await chrome.kill();
-
-    return undefined;
 }
