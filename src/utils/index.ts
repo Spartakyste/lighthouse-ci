@@ -115,7 +115,7 @@ export function buildErrors(results: Result[], thesholds: Thresholds): Error[] {
             if (score < value) errors.push({ title, score });
             else
                 core.info(
-                    `You did meet the threshold values you provided for the category ${title} with a score of ${score}`
+                    `You successfully met the threshold values you provided for the category ${title} with a score of ${score}`
                 );
         }
     });
@@ -145,22 +145,21 @@ export function buildCommentText(
     if (hasErrors) {
         text += 'The action failed. ';
     } else {
-        text += 'The action succeed. ';
+        text += 'The action succeeded. ';
     }
 
     text += 'Here are your Lighthouse scores :';
 
     results.forEach((result, index) => {
         if (index === 0) {
-            text += `\n\t- ${result.title}, with a score of ${result.score}.\n`;
+            text += `\n\t- ${result.title}: ${result.score}\n`;
         } else {
-            text += `\t- ${result.title}, with a score of ${result.score}.\n`;
+            text += `\t- ${result.title}: ${result.score}\n`;
         }
     });
 
     return text;
 }
-
 
 /**
  * @returns a boolean saying if an error happaned or not

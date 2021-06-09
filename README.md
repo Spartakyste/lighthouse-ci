@@ -1,11 +1,15 @@
 # Lighthouse-ci
 
 A simple and fast action to perform a [Lighthouse](https://developers.google.com/web/tools/lighthouse) run.
+
 ## Features
 
--   Automatically post a comment on your Pull Request with your scores
--   Can enforce minimum score for all categories
--   Support only one url at a time (for now)
+-   Automatically posts a comment on your Pull Request with your scores
+-   Can enforce a minimum score for all categories
+
+## Limitations
+
+-   Supports only one url at a time (for now)
 
 ## Configuration
 
@@ -13,13 +17,13 @@ A simple and fast action to perform a [Lighthouse](https://developers.google.com
 with:
     # Called urls as you'll be able to pass multiples urls in the future
     urls: 'http://example.com/' # Required
-    # Your PAT or GITHUB_TOKEN, on order to be able to post a comment on your Pull Request
+    # Your PAT or GITHUB_TOKEN, in order to be able to post a comment on your Pull Request
     token: ${{ secrets.GITHUB_TOKEN }} # Required
-    performanceThreshold: 50 # Optionnal, must be a number
-    accessibilityThreshold: 50 # Optionnal, must be a number
-    bestPracticesThreshold: 50 # Optionnal, must be a number
-    SEOThreshold: 50 # Optionnal, must be a number
-    PWAThreshold: 50 # Optionnal, must be a number
+    performanceThreshold: 50 # Optional, must be a number
+    accessibilityThreshold: 50 # Optional, must be a number
+    bestPracticesThreshold: 50 # Optional, must be a number
+    SEOThreshold: 50 # Optional, must be a number
+    PWAThreshold: 50 # Optional, must be a number
 ```
 
 ## Examples
@@ -30,18 +34,18 @@ with:
 name: Run Lighthouse
 
 on:
-  pull_request:
-    branches: [master]
+    pull_request:
+        branches: [master]
 
 jobs:
-  lighthouse-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Perform Lighthouse check
-        uses: Spartakyste/lighthouse-ci@main
-        with:
-          urls: "http://example.com/"
-          token: ${{ secrets.GITHUB_TOKEN }}
+    lighthouse-check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Perform Lighthouse check
+              uses: OthrysDev/lighthouse-ci@main
+              with:
+                  urls: 'http://example.com/'
+                  token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### With minimum score enforcement
@@ -50,33 +54,33 @@ jobs:
 name: Run Lighthouse with Minimum Score Enforcement
 
 on:
-  pull_request:
-    branches: [master]
+    pull_request:
+        branches: [master]
 
 jobs:
-  lighthouse-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Perform Lighthouse check
-        uses: Spartakyste/lighthouse-ci@main
-        with:
-          urls: "http://example.com/"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          performanceThreshold: 100
-          accessibilityThreshold: 90
-          bestPracticesThreshold: 25
-          SEOThreshold: 67
-          PWAThreshold: 10
-
+    lighthouse-check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Perform Lighthouse check
+              uses: OthrysDev/lighthouse-ci@main
+              with:
+                  urls: 'http://example.com/'
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  performanceThreshold: 100
+                  accessibilityThreshold: 90
+                  bestPracticesThreshold: 25
+                  SEOThreshold: 67
+                  PWAThreshold: 10
 ```
 
 ## How to update me
 
-In order to work, the repository must commit the *node_modules* and the compiled version of our Typescript code.
+In order to work, the repository must contain the _node_modules_ and the compiled version of the Typescript code.
 
-When we use the action from NOA, it'll basically go read the *index.js* WITHIN the dist directory.
+When we use the action from another repository, it'll basically go read the _index.js_ WITHIN the dist directory.
 
-If you make ANY update to the Typescript files, be sure to run `npx tsc` before you start to commit your changes. If you don't, the builded directory won't change and your changes won't applied.
+If you make ANY update to the Typescript files, be sure to run `npx tsc` before you commit your changes. If you don't, the built directory won't change and your changes won't be applied.
 
 Be sure to change the branch names within the github action, to properly test your branch and check nothing broke by accident.
-- We use "http://example.com/" as an easy testable url
+
+-   We use "http://example.com/" as an easy testable url

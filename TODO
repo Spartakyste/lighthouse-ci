@@ -1,4 +1,4 @@
 - Add husky
 - Clean / Split code in the index.ts
-- Add a quiet option that remove all unecessary core
+- Add a quiet option that removes all unecessary code
 - Make it work with multiple urls
