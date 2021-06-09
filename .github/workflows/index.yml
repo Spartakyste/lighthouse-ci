@@ -1,8 +1,8 @@
 name: Run Lighthouse with Minimum Score Enforcement
 
 on:
-  #push:
-    #branches: [fix/optionnalThresholds]
+  push:              # Keep me here, so we can test more easily when opening a PR on a given branch
+    branches: [master]    # Change the name of the branch
   pull_request:
     branches: [master]
 
@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Perform Lighthouse check
-        uses: Spartakyste/lighthouse-ci@fix/optionnalThresholds
+        uses: OthrysDev/lighthouse-ci@master # Change the branch name
         with:
           urls: "http://example.com/"
           token: ${{ secrets.GITHUB_TOKEN }}
-          #performanceThreshold: 100
+          performanceThreshold: 100
           accessibilityThreshold: 90
           bestPracticesThreshold: 25
           SEOThreshold: 67

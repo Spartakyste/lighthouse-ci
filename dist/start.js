@@ -36,7 +36,6 @@ function start() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { urlsInput, performanceThreshold, accessibilityThreshold, bestPracticesThreshold, PWAThreshold, SEOThreshold, token, } = utils_1.getInputs();
-            console.log('Test');
             const thesholds = {
                 Performance: performanceThreshold,
                 Accessibility: accessibilityThreshold,

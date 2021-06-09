@@ -1,7 +1,6 @@
 # Lighthouse-ci
 
 A simple and fast action to perform a [Lighthouse](https://developers.google.com/web/tools/lighthouse) run.
-
 ## Features
 
 -   Automatically post a comment on your Pull Request with your scores
@@ -70,3 +69,14 @@ jobs:
           PWAThreshold: 10
 
 ```
+
+## How to update me
+
+In order to work, the repository must commit the *node_modules* and the compiled version of our Typescript code.
+
+When we use the action from NOA, it'll basically go read the *index.js* WITHIN the dist directory.
+
+If you make ANY update to the Typescript files, be sure to run `npx tsc` before you start to commit your changes. If you don't, the builded directory won't change and your changes won't applied.
+
+Be sure to change the branch names within the github action, to properly test your branch and check nothing broke by accident.
+- We use "http://example.com/" as an easy testable url

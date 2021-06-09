@@ -24,7 +24,6 @@ export async function start(): Promise<void> {
             SEOThreshold,
             token,
         } = getInputs();
-        console.log('Test');
         const thesholds: Thresholds = {
             Performance: performanceThreshold,
             Accessibility: accessibilityThreshold,
