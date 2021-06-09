@@ -1,22 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Testing the buildCommentText Should return a text with the results 1`] = `
-"The action failed. Here are your Lighthouse scores :
-	- Performance, with a score of 100.
-	- Accessibility, with a score of 100.
-	- SEO, with a score of 100.
-	- Best Practices, with a score of 100.
-	- Progressive Web App, with a score of 100.
+"The lighthouse-ci action failed. Here are your Lighthouse scores :
+	- Performance: 100
+	- Accessibility: 100
+	- SEO: 100
+	- Best Practices: 100
+	- Progressive Web App: 100
 "
 `;
 
 exports[`Testing the buildCommentText Should return a text with the results 2`] = `
-"The action succeed. Here are your Lighthouse scores :
-	- Performance, with a score of 100.
-	- Accessibility, with a score of 100.
-	- SEO, with a score of 100.
-	- Best Practices, with a score of 100.
-	- Progressive Web App, with a score of 100.
+"The lighthouse-ci action succeeded. Here are your Lighthouse scores :
+	- Performance: 100
+	- Accessibility: 100
+	- SEO: 100
+	- Best Practices: 100
+	- Progressive Web App: 100
 "
 `;
 

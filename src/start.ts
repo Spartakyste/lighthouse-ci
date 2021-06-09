@@ -47,7 +47,7 @@ export async function start(): Promise<void> {
 
         core.info('Uploading artifact ...');
         await uploadArtifact();
-        core.info('Upload is over');
+        core.info('Upload successful');
 
         await deleteReport();
 
@@ -57,18 +57,18 @@ export async function start(): Promise<void> {
         const commentText = buildCommentText(results, hasErrors);
         const error = await sendPrComment(token, commentText);
         if (error) {
-            core.info("Comment could't be published");
+            core.info("Comment couldn't be posted");
         } else {
-            core.info('Comment done');
+            core.info('Comment successfully posted');
         }
 
         if (hasErrors) {
             errors.forEach((err) => {
                 core.warning(
-                    `Categorie ${err.title} got a score of ${err.score}`
+                    `Category ${err.title} got a score of ${err.score}`
                 );
             });
-            core.setFailed("Thresholds weren't meet, check the artifact");
+            core.setFailed("Thresholds weren't met, check the artifact");
         }
 
         await chrome.kill();

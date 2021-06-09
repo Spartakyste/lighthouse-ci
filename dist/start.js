@@ -53,23 +53,23 @@ function start() {
             const errors = utils_1.buildErrors(results, thesholds);
             core.info('Uploading artifact ...');
             yield utils_1.uploadArtifact();
-            core.info('Upload is over');
+            core.info('Upload successful');
             yield utils_1.deleteReport();
             const hasErrors = errors.length > 0;
             core.info('Posting comment ...');
             const commentText = utils_1.buildCommentText(results, hasErrors);
             const error = yield utils_1.sendPrComment(token, commentText);
             if (error) {
-                core.info("Comment could't be published");
+                core.info("Comment couldn't be posted");
             }
             else {
-                core.info('Comment done');
+                core.info('Comment successfully posted');
             }
             if (hasErrors) {
                 errors.forEach((err) => {
-                    core.warning(`Categorie ${err.title} got a score of ${err.score}`);
+                    core.warning(`Category ${err.title} got a score of ${err.score}`);
                 });
-                core.setFailed("Thresholds weren't meet, check the artifact");
+                core.setFailed("Thresholds weren't met, check the artifact");
             }
             yield chrome.kill();
             return undefined;

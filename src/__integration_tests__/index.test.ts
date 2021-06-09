@@ -50,15 +50,10 @@ describe('Testing the start function', () => {
         await start();
 
         expect(getInputsSpy).toHaveBeenCalledTimes(1);
-
         expect(launchSpy).toHaveBeenCalledTimes(1);
-
         expect(resultsSpy).toHaveBeenCalledTimes(1);
-
         expect(errorsSpy).toHaveBeenCalledTimes(1);
-
         expect(artifactSpy).toHaveBeenCalledTimes(1);
-
         expect(saveReportSpy).toHaveBeenCalledTimes(1);
         expect(deleteReportSpy).toHaveBeenCalledTimes(1);
     });

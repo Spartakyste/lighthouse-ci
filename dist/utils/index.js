@@ -125,7 +125,7 @@ function buildErrors(results, thesholds) {
             if (score < value)
                 errors.push({ title, score });
             else
-                core.info(`You did meet the threshold values you provided for the category ${title} with a score of ${score}`);
+                core.info(`You successfully met the threshold values you provided for the category ${title} with a score of ${score}`);
         }
     });
     return errors;
@@ -153,18 +153,18 @@ exports.deleteReport = deleteReport;
 function buildCommentText(results, hasErrors) {
     let text = '';
     if (hasErrors) {
-        text += 'The action failed. ';
+        text += 'The lighthouse-ci action failed. ';
     }
     else {
-        text += 'The action succeed. ';
+        text += 'The lighthouse-ci action succeeded. ';
     }
     text += 'Here are your Lighthouse scores :';
     results.forEach((result, index) => {
         if (index === 0) {
-            text += `\n\t- ${result.title}, with a score of ${result.score}.\n`;
+            text += `\n\t- ${result.title}: ${result.score}\n`;
         }
         else {
-            text += `\t- ${result.title}, with a score of ${result.score}.\n`;
+            text += `\t- ${result.title}: ${result.score}\n`;
         }
     });
     return text;
