@@ -143,9 +143,9 @@ export function buildCommentText(
     let text = '';
 
     if (hasErrors) {
-        text += 'The action failed. ';
+        text += 'The lighthouse-ci action failed. ';
     } else {
-        text += 'The action succeeded. ';
+        text += 'The lighthouse-ci action succeeded. ';
     }
 
     text += 'Here are your Lighthouse scores :';
